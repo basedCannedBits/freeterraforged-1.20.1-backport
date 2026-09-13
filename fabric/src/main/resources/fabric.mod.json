@@ -42,5 +42,5 @@
     "freeterraforged-common.mixins.json",
     "freeterraforged-fabric.mixins.json"
   ],
-  "icon": "assets/freeterraforged/icon.png"
+  "icon": "logo.png"
 }

@@ -3,7 +3,7 @@
   "id": "freeterraforged",
   "version": "${version}",
   "name": "FreeTerraForged",
-  "description": "Heavily customizable and feature rich overworld terrain generation options.",
+  "description": "FreeTerraForged is a community-driven fork of ReTerraForged for modern Minecraft, providing highly customizable Overworld terrain generation and continuing the TerraForged lineage.",
   "authors": [
 	"dags",
 	"Won-Ton",

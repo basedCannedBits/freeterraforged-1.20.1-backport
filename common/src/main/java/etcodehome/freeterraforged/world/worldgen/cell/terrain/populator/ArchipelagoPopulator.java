@@ -332,7 +332,7 @@ public class ArchipelagoPopulator implements CellPopulator {
         }
     }
 
-    static float continentEdge(float islandAlpha, float shelfEnd, float originalContinentEdge, float islandCoast) {
+    private static float continentEdge(float islandAlpha, float shelfEnd, float originalContinentEdge, float islandCoast) {
         if (islandAlpha < shelfEnd) {
             float alpha = smoothStep(0.0F, shelfEnd, islandAlpha);
             // Lerps from ambient deep ocean (0.0 / originalContinentEdge) up to islandCoast at the waterline
@@ -344,11 +344,11 @@ public class ArchipelagoPopulator implements CellPopulator {
         return NoiseUtil.lerp(islandCoast, 1.0F, alpha);
     }
 
-    static float beachWidth(float value) {
+    private static float beachWidth(float value) {
         return NoiseUtil.clamp(value, MIN_BEACH_WIDTH, MAX_BEACH_WIDTH);
     }
 
-    static float addSubmergedDetail(float shelfHeight, float detailBlocks, Levels levels) {
+    private static float addSubmergedDetail(float shelfHeight, float detailBlocks, Levels levels) {
         float submergedHeight = Math.min(shelfHeight, levels.water);
         float headroomBlocks = Math.max(0.0F, (levels.water - submergedHeight) * levels.terrainScaleFactor);
         float appliedDetailBlocks = Math.min(Math.max(0.0F, detailBlocks), headroomBlocks);

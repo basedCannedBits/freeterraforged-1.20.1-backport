@@ -30,11 +30,17 @@ public class MixinChunkMap {
 	@Shadow
     private RandomState randomState;
 
+	// 1.20.1 backport: FTF injects a static handler at the very start of the constructor, which needs a newer
+	// Mixin than Forge 47.1.30 ships (0.8.5 rejects it: "'static' modifier of handler method does not match").
+	// Setting the flag right before the RandomState is created is equivalent, since that's what reads it.
 	@Inject(
-			at = @At("HEAD"),
-			method = "<init>"
-			)
-	private static void beforeChunkMapInit(ServerLevel serverLevel, LevelStorageSource.LevelStorageAccess storageAccess, DataFixer dataFixer, StructureTemplateManager templateLoader, Executor executor, BlockableEventLoop<Runnable> eventLoop, LightChunkGetter lightChunkGetter, ChunkGenerator chunkGenerator, ChunkProgressListener chunkProgressListener, ChunkStatusUpdateListener chunkStatusListener, Supplier<DimensionDataStorage> dimensionStorage, int viewDistance, boolean syncChunkWrites, CallbackInfo callback) {
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/levelgen/RandomState;create(Lnet/minecraft/world/level/levelgen/NoiseGeneratorSettings;Lnet/minecraft/core/HolderGetter;J)Lnet/minecraft/world/level/levelgen/RandomState;"
+		),
+		method = "<init>"
+	)
+	private void beforeChunkMapInit(ServerLevel serverLevel, LevelStorageSource.LevelStorageAccess storageAccess, DataFixer dataFixer, StructureTemplateManager templateLoader, Executor executor, BlockableEventLoop<Runnable> eventLoop, LightChunkGetter lightChunkGetter, ChunkGenerator chunkGenerator, ChunkProgressListener chunkProgressListener, ChunkStatusUpdateListener chunkStatusListener, Supplier<DimensionDataStorage> dimensionStorage, int viewDistance, boolean syncChunkWrites, CallbackInfo callback) {
 		RTFWorldGenContext.IS_VANILLA_OVERWORLD.set(serverLevel.dimension() == Level.OVERWORLD);
 	}
 

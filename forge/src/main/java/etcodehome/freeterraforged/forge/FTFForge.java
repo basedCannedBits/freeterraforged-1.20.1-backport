@@ -77,7 +77,7 @@ public class FTFForge {
 			Path datagenPath = Files.createTempDirectory("rtf-preset-export-");
 			Preset preset = Presets.makeFTFDefault();
 			String presetName = "FTF Default (backport test)";
-			// Optional: -Dfreeterraforged.exportPresetJson=<file> exports a saved preset (e.g. an FTF 0.0.6 one) instead
+			// Optional: -Dfreeterraforged.exportPresetJson=<file> exports a saved preset (e.g. an old RTF 0.0.6 one) instead
 			String presetJson = System.getProperty("freeterraforged.exportPresetJson");
 			if (presetJson != null) {
 				Path presetPath = Paths.get(presetJson).toAbsolutePath();

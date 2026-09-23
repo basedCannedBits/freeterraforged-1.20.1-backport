@@ -95,12 +95,31 @@ public class ClimateSettings {
 		public static final int DEFAULT_UNDERGROUND_VERTICAL_SIZE = 64;
 		public static final float DEFAULT_UNDERGROUND_BIOME_COVERAGE = 0.25F;
 		public static final float DEFAULT_UNDERGROUND_BIOME_CLIMATE_INFLUENCE = 0.75F;
-		private static final Codec<Integer> BIOME_SIZE_CODEC = Codec.intRange(MIN_BIOME_SIZE, MAX_BIOME_SIZE);
-		private static final Codec<Integer> UNDERGROUND_VERTICAL_SIZE_CODEC = Codec.intRange(
+		// 1.20.1 backport: DFU 6's intRange/floatRange return a *partial* result for out-of-range values, so
+		// RecordCodecBuilder still calls the validating constructor and the IllegalArgumentException escapes
+		// parse(). These strict variants fail without a partial value, giving a clean DataResult error instead.
+		private static final Codec<Integer> BIOME_SIZE_CODEC = strictIntRange(MIN_BIOME_SIZE, MAX_BIOME_SIZE);
+		private static final Codec<Integer> UNDERGROUND_VERTICAL_SIZE_CODEC = strictIntRange(
 			MIN_UNDERGROUND_VERTICAL_SIZE,
 			MAX_UNDERGROUND_VERTICAL_SIZE
 		);
-		private static final Codec<Float> UNIT_FLOAT_CODEC = Codec.floatRange(0.0F, 1.0F);
+		private static final Codec<Float> UNIT_FLOAT_CODEC = strictFloatRange(0.0F, 1.0F);
+
+		private static Codec<Integer> strictIntRange(int min, int max) {
+			java.util.function.Function<Integer, com.mojang.serialization.DataResult<Integer>> check = (value) ->
+				value >= min && value <= max
+					? com.mojang.serialization.DataResult.success(value)
+					: com.mojang.serialization.DataResult.error(() -> "Value " + value + " outside of range [" + min + ":" + max + "]");
+			return Codec.INT.flatXmap(check, check);
+		}
+
+		private static Codec<Float> strictFloatRange(float min, float max) {
+			java.util.function.Function<Float, com.mojang.serialization.DataResult<Float>> check = (value) ->
+				value >= min && value <= max
+					? com.mojang.serialization.DataResult.success(value)
+					: com.mojang.serialization.DataResult.error(() -> "Value " + value + " outside of range [" + min + ":" + max + "]");
+			return Codec.FLOAT.flatXmap(check, check);
+		}
 
     	public static final Codec<BiomeShape> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BIOME_SIZE_CODEC.fieldOf("biomeSize").forGetter((o) -> o.biomeSize),

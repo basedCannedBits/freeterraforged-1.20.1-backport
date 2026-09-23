@@ -1,5 +1,9 @@
 package raccoonman.reterraforged.forge;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import com.mojang.serialization.Codec;
 
 import net.minecraft.data.DataGenerator;
@@ -13,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.world.BiomeModifier;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.AddReloadListenerEvent;
+import net.minecraftforge.event.server.ServerStartedEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -23,6 +28,8 @@ import net.minecraftforge.server.ServerLifecycleHooks;
 import raccoonman.reterraforged.RTFCommon;
 import raccoonman.reterraforged.client.data.RTFLanguageProvider;
 import raccoonman.reterraforged.client.data.RTFTranslationKeys;
+import raccoonman.reterraforged.data.worldgen.Datapacks;
+import raccoonman.reterraforged.data.worldgen.preset.settings.Presets;
 import raccoonman.reterraforged.platform.forge.RegistryUtilImpl;
 import raccoonman.reterraforged.server.RTFMinecraftServer;
 import raccoonman.reterraforged.world.worldgen.biome.modifier.forge.AddModifier;
@@ -52,7 +59,27 @@ public class RTFForge {
 		// mixin into MinecraftServer's reloadResources lambda (lambda names differ on Forge).
 		MinecraftForge.EVENT_BUS.addListener(RTFForge::addReloadListeners);
 
+		// Backport testing aid: -Dreterraforged.exportDefaultPreset=<dir> writes the default preset as a
+		// datapack folder when a server starts, so FTF terrain can be tested on a headless server.
+		if (System.getProperty(EXPORT_PRESET_PROPERTY) != null) {
+			MinecraftForge.EVENT_BUS.addListener(RTFForge::exportDefaultPreset);
+		}
+
 		RegistryUtilImpl.register(modBus);
+	}
+
+	private static final String EXPORT_PRESET_PROPERTY = "reterraforged.exportDefaultPreset";
+
+	private static void exportDefaultPreset(ServerStartedEvent event) {
+		Path outputPath = Paths.get(System.getProperty(EXPORT_PRESET_PROPERTY)).toAbsolutePath();
+		try {
+			Path datagenPath = Files.createTempDirectory("rtf-preset-export-");
+			DataGenerator generator = Datapacks.makePreset(Presets.makeRTFDefault(), event.getServer().registryAccess(), datagenPath, outputPath, "RTF Default (backport test)");
+			generator.run();
+			RTFCommon.LOGGER.info("Exported default preset datapack to {}", outputPath);
+		} catch (Exception e) {
+			RTFCommon.LOGGER.error("Failed to export default preset datapack to {}", outputPath, e);
+		}
 	}
 
 	private static void addReloadListeners(AddReloadListenerEvent event) {

@@ -49,6 +49,11 @@ public abstract class MixinMultiNoiseBiomeSource implements FTFMultiNoiseBiomeSo
         return this.parameters.map(Function.identity(), holder -> holder.value().parameters());
     }
 
+    @Override
+    public java.util.Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList>> freeterraforged$getParameterListPresetKey() {
+        return this.parameters.right().flatMap(Holder::unwrapKey);
+    }
+
     @Inject(
             method = "getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;",
             at = @At("RETURN"),

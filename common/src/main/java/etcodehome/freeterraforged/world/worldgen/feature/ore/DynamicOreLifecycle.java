@@ -17,6 +17,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import etcodehome.freeterraforged.FTFCommon;
 import etcodehome.freeterraforged.server.FTFMinecraftServer;
 import etcodehome.freeterraforged.world.worldgen.FTFRandomState;
+import etcodehome.freeterraforged.world.worldgen.biome.FTFMultiNoiseBiomeSource;
 import etcodehome.freeterraforged.world.worldgen.feature.ore.DynamicOrePlan.VerticalFrame;
 
 public final class DynamicOreLifecycle {
@@ -77,6 +78,33 @@ public final class DynamicOreLifecycle {
 				"Dynamic ore contract inspection failure: {}", failure
 		));
 		logUndergroundOresOrder(server, generator);
+		logBiomeSourceIdentity(generator);
+	}
+
+	// Diagnostic (backport): the actual thing that determines FeatureSorter's world-wide feature
+	// ordering (and thus the decoration seed for every un-remapped vanilla feature, granite included)
+	// is generator.getBiomeSource().possibleBiomes() -- its exact iteration order. This logs what that
+	// biome source actually is at runtime: an inline (Either.left) list built by our own code, or a
+	// registered preset (Either.right) such as vanilla's own untouched minecraft:overworld -- plus the
+	// exact resulting order, so it can be compared directly against what real FTF does.
+	private static void logBiomeSourceIdentity(ChunkGenerator generator) {
+		if (!(generator.getBiomeSource() instanceof FTFMultiNoiseBiomeSource biomeSource)) {
+			FTFCommon.LOGGER.info("Biome source is not a FTFMultiNoiseBiomeSource: {}", generator.getBiomeSource().getClass().getName());
+			return;
+		}
+		var presetKey = biomeSource.freeterraforged$getParameterListPresetKey();
+		FTFCommon.LOGGER.info("Biome source parameters: {}", presetKey.isPresent()
+				? "Either.right, preset=" + presetKey.get().location()
+				: "Either.left (inline list)");
+
+		StringBuilder sb = new StringBuilder();
+		int index = 0;
+		for (Holder<Biome> holder : generator.getBiomeSource().possibleBiomes()) {
+			ResourceLocation id = holder.unwrapKey().map(key -> key.location()).orElse(null);
+			sb.append(index).append('=').append(id).append(' ');
+			index++;
+		}
+		FTFCommon.LOGGER.info("Biome source possibleBiomes() order ({} total): {}", index, sb);
 	}
 
 	// Diagnostic (backport): dump each biome's UNDERGROUND_ORES feature list, in order, so it can be diffed

@@ -29,6 +29,7 @@ import raccoonman.reterraforged.RTFCommon;
 import raccoonman.reterraforged.client.data.RTFLanguageProvider;
 import raccoonman.reterraforged.client.data.RTFTranslationKeys;
 import raccoonman.reterraforged.data.worldgen.Datapacks;
+import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
 import raccoonman.reterraforged.data.worldgen.preset.settings.Presets;
 import raccoonman.reterraforged.platform.forge.RegistryUtilImpl;
 import raccoonman.reterraforged.server.RTFMinecraftServer;
@@ -74,7 +75,21 @@ public class RTFForge {
 		Path outputPath = Paths.get(System.getProperty(EXPORT_PRESET_PROPERTY)).toAbsolutePath();
 		try {
 			Path datagenPath = Files.createTempDirectory("rtf-preset-export-");
-			DataGenerator generator = Datapacks.makePreset(Presets.makeRTFDefault(), event.getServer().registryAccess(), datagenPath, outputPath, "RTF Default (backport test)");
+			Preset preset = Presets.makeRTFDefault();
+			String presetName = "RTF Default (backport test)";
+			// Optional: -Dreterraforged.exportPresetJson=<file> exports a saved preset (e.g. an RTF 0.0.6 one) instead
+			String presetJson = System.getProperty("reterraforged.exportPresetJson");
+			if (presetJson != null) {
+				Path presetPath = Paths.get(presetJson).toAbsolutePath();
+				try (java.io.Reader reader = Files.newBufferedReader(presetPath)) {
+					com.mojang.serialization.DataResult<Preset> result = Preset.DIRECT_CODEC.parse(com.mojang.serialization.JsonOps.INSTANCE, com.google.gson.JsonParser.parseReader(reader));
+					result.error().ifPresent(error -> RTFCommon.LOGGER.error("Preset {} did not parse cleanly: {}", presetPath, error.message()));
+					preset = result.result().orElseThrow(() -> new IllegalStateException("Preset " + presetPath + " could not be loaded"));
+					presetName = presetPath.getFileName().toString();
+					RTFCommon.LOGGER.info("Loaded preset {} for export", presetPath);
+				}
+			}
+			DataGenerator generator = Datapacks.makePreset(preset, event.getServer().registryAccess(), datagenPath, outputPath, presetName);
 			generator.run();
 			RTFCommon.LOGGER.info("Exported default preset datapack to {}", outputPath);
 		} catch (Exception e) {

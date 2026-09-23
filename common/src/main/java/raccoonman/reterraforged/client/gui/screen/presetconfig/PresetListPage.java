@@ -358,7 +358,11 @@ class PresetListPage extends BisectedPage<PresetConfigScreen, AbstractWidget, Ab
 		List<PresetEntry> userPresets = new ArrayList<>();
 		userPresets.addAll(this.listPresets(PRESET_PATH));
 		userPresets.addAll(this.listPresets(LEGACY_TF_PRESET_PATH));
-		userPresets.addAll(this.listPresets(LEGACY_RTF_PRESET_PATH));
+		// 1.20.1 backport: this build keeps the "reterraforged" mod id, so the legacy RTF folder IS the preset folder.
+		// Listing it again would show every preset twice.
+		if (!LEGACY_RTF_PRESET_PATH.equals(PRESET_PATH)) {
+			userPresets.addAll(this.listPresets(LEGACY_RTF_PRESET_PATH));
+		}
 
 		// Sort user presets by last modified timestamp ascending (oldest first at top, newest last at bottom)
 		userPresets.sort((a, b) -> {

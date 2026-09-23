@@ -23,7 +23,7 @@ public abstract class MixinWorldGenRegionCache {
     @Unique private ChunkStatus rtf$lastStatus;
 
     @Inject(
-            method = "getChunk(IILnet.minecraft.world.level.chunk.ChunkStatus;Z)Lnet/minecraft/world/level/chunk/ChunkAccess;",
+            method = "getChunk(IILnet/minecraft/world/level/chunk/ChunkStatus;Z)Lnet/minecraft/world/level/chunk/ChunkAccess;",
             at = @At("HEAD"),
             cancellable = true)
     private void rtf$memoHit(final int x, final int z, final ChunkStatus chunkStatus, final boolean requireChunk,
@@ -38,7 +38,7 @@ public abstract class MixinWorldGenRegionCache {
     }
 
     @Inject(
-            method = "getChunk(IILnet.minecraft.world.level.chunk.ChunkStatus;Z)Lnet/minecraft/world/level/chunk/ChunkAccess;",
+            method = "getChunk(IILnet/minecraft/world/level/chunk/ChunkStatus;Z)Lnet/minecraft/world/level/chunk/ChunkAccess;",
             at = @At("RETURN"))
     private void rtf$memoStore(final int x, final int z, final ChunkStatus chunkStatus, final boolean requireChunk,
                                final CallbackInfoReturnable<ChunkAccess> cir) {

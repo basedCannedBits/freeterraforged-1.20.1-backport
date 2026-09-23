@@ -1,30 +1,28 @@
 package raccoonman.reterraforged.mixin;
 
-import raccoonman.reterraforged.world.worldgen.feature.placement.SurfaceFeatureRescue;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
+import raccoonman.reterraforged.world.worldgen.feature.placement.SurfaceFeatureRescue;
 
+// 1.20.1 backport: FTF used MixinExtras @WrapMethod (try/finally around the original).
+// Plain HEAD/RETURN injections give the same begin/finish pairing on normal returns.
 @Mixin(PlacedFeature.class)
 class MixinPlacedFeature {
 
-	@WrapMethod(method = "placeWithContext")
-	private boolean reterraforged$manageSurfaceFeature(
-		PlacementContext context,
-		RandomSource random,
-		BlockPos origin,
-		Operation<Boolean> original
-	) {
+	@Inject(method = "placeWithContext", at = @At("HEAD"))
+	private void reterraforged$beginSurfaceFeature(PlacementContext context, RandomSource random, BlockPos origin, CallbackInfoReturnable<Boolean> cir) {
 		SurfaceFeatureRescue.begin((PlacedFeature)(Object)this, context);
-		try {
-			return original.call(context, random, origin);
-		} finally {
-			SurfaceFeatureRescue.finish();
-		}
+	}
+
+	@Inject(method = "placeWithContext", at = @At("RETURN"))
+	private void reterraforged$finishSurfaceFeature(PlacementContext context, RandomSource random, BlockPos origin, CallbackInfoReturnable<Boolean> cir) {
+		SurfaceFeatureRescue.finish();
 	}
 }

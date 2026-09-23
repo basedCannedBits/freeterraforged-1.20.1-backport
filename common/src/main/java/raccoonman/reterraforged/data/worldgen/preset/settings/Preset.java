@@ -11,7 +11,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.RegistryDataLoader;
 
 import raccoonman.reterraforged.data.worldgen.compat.terrablender.TBNoiseRouterData;
 import raccoonman.reterraforged.data.worldgen.preset.PresetBiomeModifierData;
@@ -58,28 +57,80 @@ public record Preset(WorldSettings world, SurfaceSettings surface, CaveSettings 
 	}
 
 	public HolderLookup.Provider buildPatch(HolderLookup.Provider registries) {
-		return this.buildPatchedRegistries(registries).patches();
+		// 1.20.1: RegistrySetBuilder.buildPatch returns the patch provider directly (no Cloner / PatchedRegistries)
+		return this.createPatchBuilder().buildPatch(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), registries);
 	}
 
 	public HolderLookup.Provider buildFullPatch(RegistryAccess registries) {
-		return materialize(this.buildPatchedRegistries(registries).full());
+		// 1.20.1 replacement for PatchedRegistries.full(): overlay the patch on top of the live registries
+		return materialize(overlay(registries, this.buildPatch(registries)));
 	}
 
 	private static final Set<String> PREVIEW_NAMESPACES = Set.of("minecraft", "reterraforged");
 
 	private static HolderLookup.Provider materialize(HolderLookup.Provider provider) {
-		provider.listRegistries()
-			.filter(PREVIEW_REGISTRIES::contains)
-			.forEach(key -> provider.lookupOrThrow(key).listElements()
-				.filter(holder -> PREVIEW_NAMESPACES.contains(holder.key().location().getNamespace()))
-				.forEach(holder -> holder.value()));
+		PREVIEW_REGISTRIES.forEach(key -> provider.lookup(key).ifPresent(lookup -> lookup.listElements()
+			.filter(holder -> PREVIEW_NAMESPACES.contains(holder.key().location().getNamespace()))
+			.forEach(holder -> holder.value())));
 		return provider;
 	}
 
-	private RegistrySetBuilder.PatchedRegistries buildPatchedRegistries(HolderLookup.Provider registries) {
-		RegistrySetBuilder builder = new RegistrySetBuilder();
+	private static HolderLookup.Provider overlay(HolderLookup.Provider base, HolderLookup.Provider patch) {
+		return new HolderLookup.Provider() {
+			@Override
+			public <T> Optional<HolderLookup.RegistryLookup<T>> lookup(ResourceKey<? extends Registry<? extends T>> key) {
+				Optional<HolderLookup.RegistryLookup<T>> patched = patch.lookup(key);
+				Optional<HolderLookup.RegistryLookup<T>> original = base.lookup(key);
+				if (patched.isEmpty()) {
+					return original;
+				}
+				if (original.isEmpty()) {
+					return patched;
+				}
+				return Optional.of(overlayLookup(original.get(), patched.get()));
+			}
+		};
+	}
 
-		// 1. Setup Patches
+	private static <T> HolderLookup.RegistryLookup<T> overlayLookup(HolderLookup.RegistryLookup<T> base, HolderLookup.RegistryLookup<T> patch) {
+		return new HolderLookup.RegistryLookup<T>() {
+			@Override
+			public ResourceKey<? extends Registry<? extends T>> key() {
+				return base.key();
+			}
+
+			@Override
+			public com.mojang.serialization.Lifecycle registryLifecycle() {
+				return base.registryLifecycle();
+			}
+
+			@Override
+			public Stream<Holder.Reference<T>> listElements() {
+				Set<ResourceKey<T>> patchedKeys = new HashSet<>();
+				List<Holder.Reference<T>> patched = patch.listElements().peek(holder -> patchedKeys.add(holder.key())).toList();
+				return Stream.concat(patched.stream(), base.listElements().filter(holder -> !patchedKeys.contains(holder.key())));
+			}
+
+			@Override
+			public Stream<HolderSet.Named<T>> listTags() {
+				return base.listTags();
+			}
+
+			@Override
+			public Optional<Holder.Reference<T>> get(ResourceKey<T> resourceKey) {
+				Optional<Holder.Reference<T>> patched = patch.get(resourceKey);
+				return patched.isPresent() ? patched : base.get(resourceKey);
+			}
+
+			@Override
+			public Optional<HolderSet.Named<T>> get(net.minecraft.tags.TagKey<T> tagKey) {
+				return base.get(tagKey);
+			}
+		};
+	}
+
+	private RegistrySetBuilder createPatchBuilder() {
+		RegistrySetBuilder builder = new RegistrySetBuilder();
 		this.addPatch(builder, RTFRegistries.PRESET, (preset, ctx) -> ctx.register(KEY, preset));
 		this.addPatch(builder, RTFRegistries.NOISE, PresetNoiseData::bootstrap);
 		this.addPatch(builder, RTFRegistries.BIOME_MODIFIER, PresetBiomeModifierData::bootstrap);
@@ -92,63 +143,7 @@ public record Preset(WorldSettings world, SurfaceSettings surface, CaveSettings 
 			TBNoiseRouterData.bootstrap(ctx);
 		});
 		this.addPatch(builder, Registries.NOISE_SETTINGS, PresetNoiseGeneratorSettings::bootstrap);
-
-		// 2. Initialize Cloner and Gatekeeper tracking
-		Cloner.Factory factory = new Cloner.Factory();
-		Set<ResourceKey<? extends Registry<?>>> armedRegistries = new HashSet<>();
-
-		// 3. Process Vanilla Worldgen Registries
-		RegistryDataLoader.WORLDGEN_REGISTRIES.forEach(registryData -> {
-			ResourceKey<? extends Registry<?>> key = registryData.key();
-			// Only arm registries from known safe namespaces to be extra cautious
-			String namespace = key.location().getNamespace();
-
-			if (namespace.equals("minecraft") || namespace.equals("reterraforged")) {
-				registryData.runWithArguments(factory::addCodec);
-				armedRegistries.add(key);
-			}
-		});
-
-		armedRegistries.add(Registries.STRUCTURE_SET);
-
-		// 4. Arm Custom RTF Registries
-		this.addAndTrack(factory, armedRegistries, RTFRegistries.NOISE, Noise.DIRECT_CODEC);
-		this.addAndTrack(factory, armedRegistries, RTFRegistries.BIOME_MODIFIER, BiomeModifier.DIRECT_CODEC);
-		this.addAndTrack(factory, armedRegistries, RTFRegistries.STRUCTURE_RULE, StructureRule.DIRECT_CODEC);
-		this.addAndTrack(factory, armedRegistries, RTFRegistries.PRESET, Preset.DIRECT_CODEC);
-
-		// 5. Wrap registries in a safety shield
-		// This ensures the cloner only sees registries we explicitly gave it a codec for.
-		// Unarmed registries (like mixed_litter) will be ignored safely.
-		HolderLookup.Provider safeSource = this.filterToArmedOnly(registries, armedRegistries);
-
-		return builder.buildPatch(
-				RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY),
-				safeSource,
-				factory
-		);
-	}
-
-	/**
-	 * Adds a codec to the factory and records the registry key so the filter knows it's safe to process.
-	 */
-	private <T> void addAndTrack(Cloner.Factory factory, Set<ResourceKey<? extends Registry<?>>> set, ResourceKey<? extends Registry<T>> key, Codec<T> codec) {
-		factory.addCodec(key, codec);
-		set.add(key);
-	}
-
-	private HolderLookup.Provider filterToArmedOnly(HolderLookup.Provider original, Set<ResourceKey<? extends Registry<?>>> armed) {
-		return new HolderLookup.Provider() {
-			@Override
-			public <T> Optional<HolderLookup.RegistryLookup<T>> lookup(ResourceKey<? extends Registry<? extends T>> key) {
-				return armed.contains(key) ? original.lookup(key) : Optional.empty();
-			}
-
-			@Override
-			public Stream<ResourceKey<? extends Registry<?>>> listRegistries() {
-				return original.listRegistries().filter(armed::contains);
-			}
-		};
+		return builder;
 	}
 
 	private <T> void addPatch(RegistrySetBuilder builder, ResourceKey<? extends Registry<T>> key, Patch<T> patch) {

@@ -8,6 +8,7 @@ import raccoonman.reterraforged.world.worldgen.densityfunction.tile.TileCache;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -52,25 +53,25 @@ class MixinNoiseChunk {
     @Final
     private int cellHeight;
 
-	@Inject(
-			method = "<init>",
-			at = @At(
-					value = "INVOKE",
-					target = "Lnet/minecraft/world/level/levelgen/NoiseRouter;mapAll(Lnet/minecraft/world/level/levelgen/DensityFunction$Visitor;)Lnet/minecraft/world/level/levelgen/NoiseRouter;",
-					shift = At.Shift.BEFORE
-			)
+	// 1.20.1 backport: FTF used an @Inject at INVOKE inside the constructor, which Mixin 0.8.5 (Forge 47.1.30)
+	// rejects. Redirecting RandomState.router() (the call right before router mapping) with captured constructor
+	// args runs at the same point; NTF used this exact pattern on 1.20.1.
+	@Redirect(
+		method = "<init>",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/world/level/levelgen/RandomState;router()Lnet/minecraft/world/level/levelgen/NoiseRouter;"
+		)
 	)
-	private void reterraforged$initializeBeforeRouterMapping(
+	private NoiseRouter reterraforged$initializeBeforeRouterMapping(
+			RandomState routerOwner,
 			int cellCountXZ,
 			RandomState randomState,
 			int minBlockX,
 			int minBlockZ,
 			NoiseSettings noiseSettings,
 			DensityFunctions.BeardifierOrMarker beardifierOrMarker,
-			NoiseGeneratorSettings generatorSettings,
-			Aquifer.FluidPicker fluidPicker,
-			Blender blender,
-			CallbackInfo callback
+			NoiseGeneratorSettings generatorSettings
 	) {
 		this.randomState = randomState;
 		this.chunkX = SectionPos.blockToSectionCoord(minBlockX);
@@ -84,6 +85,7 @@ class MixinNoiseChunk {
 			this.cellCountY = Math.min(this.cellCountY, maxHeight / this.cellHeight);
 		}
 		this.cache2d = new CellSampler.Cache2d();
+		return routerOwner.router();
 	}
 
 	@ModifyVariable(

@@ -123,10 +123,10 @@ public class ClimateSettings {
 
     	public static final Codec<BiomeShape> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 			BIOME_SIZE_CODEC.fieldOf("biomeSize").forGetter((o) -> o.biomeSize),
-			BIOME_SIZE_CODEC.optionalFieldOf("undergroundBiomeSize").forGetter((o) -> Optional.of(o.undergroundBiomeSize)),
-			UNDERGROUND_VERTICAL_SIZE_CODEC.optionalFieldOf("undergroundBiomeVerticalSize", DEFAULT_UNDERGROUND_VERTICAL_SIZE).forGetter((o) -> o.undergroundBiomeVerticalSize),
-			UNIT_FLOAT_CODEC.optionalFieldOf("undergroundBiomeCoverage", DEFAULT_UNDERGROUND_BIOME_COVERAGE).forGetter((o) -> o.undergroundBiomeCoverage),
-			UNIT_FLOAT_CODEC.optionalFieldOf("undergroundBiomeClimateInfluence", DEFAULT_UNDERGROUND_BIOME_CLIMATE_INFLUENCE).forGetter((o) -> o.undergroundBiomeClimateInfluence),
+			StrictOptionalField.of("undergroundBiomeSize", BIOME_SIZE_CODEC).forGetter((o) -> Optional.of(o.undergroundBiomeSize)),
+			StrictOptionalField.of("undergroundBiomeVerticalSize", UNDERGROUND_VERTICAL_SIZE_CODEC, DEFAULT_UNDERGROUND_VERTICAL_SIZE).forGetter((o) -> o.undergroundBiomeVerticalSize),
+			StrictOptionalField.of("undergroundBiomeCoverage", UNIT_FLOAT_CODEC, DEFAULT_UNDERGROUND_BIOME_COVERAGE).forGetter((o) -> o.undergroundBiomeCoverage),
+			StrictOptionalField.of("undergroundBiomeClimateInfluence", UNIT_FLOAT_CODEC, DEFAULT_UNDERGROUND_BIOME_CLIMATE_INFLUENCE).forGetter((o) -> o.undergroundBiomeClimateInfluence),
 			Codec.BOOL.optionalFieldOf("undergroundBiomeBanding", true).forGetter((o) -> o.undergroundBiomeBanding),
     		Codec.INT.fieldOf("macroNoiseSize").forGetter((o) -> o.macroNoiseSize),
     		Codec.INT.fieldOf("biomeWarpScale").forGetter((o) -> o.biomeWarpScale),

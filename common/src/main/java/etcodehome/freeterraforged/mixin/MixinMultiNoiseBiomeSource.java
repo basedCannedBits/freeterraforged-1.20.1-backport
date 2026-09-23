@@ -135,16 +135,26 @@ public abstract class MixinMultiNoiseBiomeSource implements FTFMultiNoiseBiomeSo
     private void rtf$bypassInlinePossibleBiomesCrash(CallbackInfoReturnable<java.util.stream.Stream<Holder<Biome>>> cir) {
         // Only intercept inline parameter lists (Either.left) used by preset previews.
         // Runtime worldgen sources (Either.right) are left untouched.
+        //
+        // IMPORTANT: this must preserve the parameter list's original order (matching vanilla
+        // MultiNoiseBiomeSource#collectPossibleBiomes, which streams the list directly with no
+        // Set involved). ChunkGenerator builds its one-time global FeatureSorter ordering from
+        // this exact stream, and every un-remapped vanilla feature's decoration RNG seed is an
+        // index into that ordering. Collectors.toUnmodifiableSet() (the previous implementation)
+        // returns a JDK immutable set whose iteration order is randomized per JVM run, silently
+        // reshuffling every ore's placement seed (granite/andesite/diorite/etc.) on every restart
+        // even with the same world seed. Deduplicating with Stream.distinct() instead preserves
+        // encounter order and is stable across runs.
         if (this.parameters != null && this.parameters.left().isPresent()) {
             try {
                 Climate.ParameterList<Holder<Biome>> parameterList = this.freeterraforged$getParameters();
                 if (parameterList != null) {
-                    java.util.Set<Holder<Biome>> dynamicBiomes = parameterList.values().stream()
+                    java.util.stream.Stream<Holder<Biome>> dynamicBiomes = parameterList.values().stream()
                             .map(com.mojang.datafixers.util.Pair::getSecond)
                             .map(holder -> (Holder<Biome>) holder)
-                            .collect(java.util.stream.Collectors.toUnmodifiableSet());
+                            .distinct();
 
-                    cir.setReturnValue(dynamicBiomes.stream());
+                    cir.setReturnValue(dynamicBiomes);
                 }
             } catch (Exception ignored) {
                 // Fallback to default execution if uninitialized

@@ -3,6 +3,7 @@ package etcodehome.freeterraforged.world.worldgen.feature.ore;
 import java.util.List;
 
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -91,7 +92,7 @@ public final class DynamicOreLifecycle {
 			if (biomeId == null) {
 				continue;
 			}
-			List<List<Holder<PlacedFeature>>> steps = generator.getBiomeGenerationSettings(biomeHolder).features();
+			List<HolderSet<PlacedFeature>> steps = generator.getBiomeGenerationSettings(biomeHolder).features();
 			if (step >= steps.size()) {
 				continue;
 			}

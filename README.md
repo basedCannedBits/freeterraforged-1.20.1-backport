@@ -1,4 +1,4 @@
-# FreeTerraForged
+# ReTerraForged
 A community driven fork of the Legendary ReTerraForged project for modern minecraft providing heavily customizable overworld terrain generation.
 Additional feature contributions are welcomed via forking and raising a merge PR.
 

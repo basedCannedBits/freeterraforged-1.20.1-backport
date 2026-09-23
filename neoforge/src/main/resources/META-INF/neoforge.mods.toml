@@ -3,30 +3,30 @@ loaderVersion="[4,)"
 license="MIT"
 
 [[mixins]]
-    config = "freeterraforged-common.mixins.json"
+    config = "reterraforged-common.mixins.json"
 
 [[mixins]]
-    config = "freeterraforged-neoforge.mixins.json"
+    config = "reterraforged-neoforge.mixins.json"
 
 [[mods]]
-    modId="freeterraforged"
-    displayName="FreeTerraForged"
+    modId="reterraforged"
+    displayName="ReTerraForged"
     version="${version}"
     authors="dags,Won-Ton,racoonman2,psiber,squinch"
     credits="raccoonman and the wider TerraForged community, in all its past and present iterations."
     logoFile="logo.png"
-    displayURL="https://github.com/etcodehome/freeterraforged/"
-    issueTrackerURL="https://github.com/etcodehome/freeterraforged/issues"
-    description="FreeTerraForged is a community-driven fork of ReTerraForged for modern Minecraft, providing highly customizable Overworld terrain generation and continuing the TerraForged lineage."
+    displayURL="https://github.com/raccoonman/reterraforged/"
+    issueTrackerURL="https://github.com/raccoonman/reterraforged/issues"
+    description="ReTerraForged is a community-driven fork of ReTerraForged for modern Minecraft, providing highly customizable Overworld terrain generation and continuing the TerraForged lineage."
 
-[[dependencies.freeterraforged]]
+[[dependencies.reterraforged]]
     modId="neoforge"
     mandatory=true
     versionRange="[21,)"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.freeterraforged]]
+[[dependencies.reterraforged]]
 	modId = "minecraft"
 	mandatory = true
 	versionRange = "[1.21.1,)"
@@ -34,7 +34,7 @@ license="MIT"
 	side = "BOTH"
 
 # We enforce 3.0.14 because otherwise biome previews break in a non-obvious manner
-[[dependencies.freeterraforged]]
+[[dependencies.reterraforged]]
     modId = "biolith"
     type = "optional"
     versionRange = "[3.0.14,)"
@@ -44,7 +44,7 @@ license="MIT"
 [[dependencies.your_mod_id]]
 modId = "reterraforged"
 type = "incompatible"
-reason = "RTF is an ancestor of FTF and as such cannot be used in parallel with it."
+reason = "RTF is an ancestor of RTF and as such cannot be used in parallel with it."
 versionRange = "*"
 ordering = "NONE"
 side = "BOTH"

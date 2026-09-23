@@ -67,7 +67,7 @@ shadowJar {
 }
 
 remapJar {
-    atAccessWideners.add('freeterraforged.accesswidener')
+    atAccessWideners.add('reterraforged.accesswidener')
 
     input.set shadowJar.archiveFile
     dependsOn shadowJar

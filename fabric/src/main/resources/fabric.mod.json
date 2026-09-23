@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "freeterraforged",
+  "id": "reterraforged",
   "version": "${version}",
-  "name": "FreeTerraForged",
-  "description": "FreeTerraForged is a community-driven fork of ReTerraForged for modern Minecraft, providing highly customizable Overworld terrain generation and continuing the TerraForged lineage.",
+  "name": "ReTerraForged",
+  "description": "ReTerraForged is a community-driven fork of ReTerraForged for modern Minecraft, providing highly customizable Overworld terrain generation and continuing the TerraForged lineage.",
   "authors": [
 	"dags",
 	"Won-Ton",
@@ -13,20 +13,20 @@
   ],
   "credits":"The wider TerraForged community, in all its past and present iterations.",
   "contact": {
-    "repo": "https://github.com/etcodehome/freeterraforged/",
-    "issues": "https://github.com/etcodehome/freeterraforged/issues"
+    "repo": "https://github.com/raccoonman/reterraforged/",
+    "issues": "https://github.com/raccoonman/reterraforged/issues"
   },
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "etcodehome.freeterraforged.fabric.FTFFabric"
+      "raccoonman.reterraforged.fabric.RTFFabric"
     ],
     "client": [
-      "etcodehome.freeterraforged.fabric.FTFFabricClient"
+      "raccoonman.reterraforged.fabric.RTFFabricClient"
     ],
     "fabric-datagen": [
-      "etcodehome.freeterraforged.fabric.FTFFabric"
+      "raccoonman.reterraforged.fabric.RTFFabric"
     ]
   },
   "depends": {
@@ -39,8 +39,8 @@
     "reterraforged": "*"
   },
   "mixins": [
-    "freeterraforged-common.mixins.json",
-    "freeterraforged-fabric.mixins.json"
+    "reterraforged-common.mixins.json",
+    "reterraforged-fabric.mixins.json"
   ],
   "icon": "logo.png"
 }

@@ -11,7 +11,7 @@ import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil.Vec2f;
 
 public record Erosion(Noise input, int seed, int octaves, float strength, float gridSize, float amplitude, float lacunarity, float distanceFallOff, BlendMode blendMode, ThreadLocal<float[]> cache) implements Noise {
 	public static final Codec<Erosion> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Erosion::input),
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Erosion::input),
 		Codec.INT.fieldOf("seed").forGetter(Erosion::seed),
 		Codec.INT.fieldOf("octaves").forGetter(Erosion::octaves),
 		Codec.FLOAT.fieldOf("strength").forGetter(Erosion::strength),

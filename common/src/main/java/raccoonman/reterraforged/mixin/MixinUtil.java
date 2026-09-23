@@ -2,6 +2,8 @@ package raccoonman.reterraforged.mixin;
 
 import java.util.concurrent.ExecutorService;
 
+import raccoonman.reterraforged.concurrent.ThreadPools;
+import raccoonman.reterraforged.concurrent.cache.Cache;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -9,8 +11,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.Util;
-import raccoonman.reterraforged.concurrent.ThreadPools;
-import raccoonman.reterraforged.concurrent.cache.Cache;
 
 @Mixin(Util.class)
 public class MixinUtil {

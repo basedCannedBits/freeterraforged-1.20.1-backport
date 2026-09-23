@@ -51,7 +51,7 @@ public class DecorateSnowFeature extends Feature<Config> {
 		
 		@Nullable
 		GeneratorContext generatorContext;
-		if((Object) randomState instanceof RTFRandomState rtfRandomState && (generatorContext = rtfRandomState.generatorContext()) != null) {
+		if((Object) randomState instanceof RTFRandomState ftfRandomState && (generatorContext = ftfRandomState.generatorContext()) != null) {
 			ChunkGenerator generator = placeContext.chunkGenerator();
 			ChunkPos chunkPos = new ChunkPos(placeContext.origin());
 			int chunkX = chunkPos.x;
@@ -117,7 +117,8 @@ public class DecorateSnowFeature extends Feature<Config> {
 			}
 	        return true;
 		} else {
-			throw new IllegalStateException();
+			// Gracefully abort generation if the active dimension context is missing or non-ReTerraForged
+			return false;
 		}
 	}
 
@@ -138,8 +139,9 @@ public class DecorateSnowFeature extends Feature<Config> {
     }
     
     private static void smoothSnow(ChunkAccess chunk, BlockPos.MutableBlockPos pos, Cell cell, Levels levels, float min) {
-        float height = cell.height * levels.worldHeight;
-        float depth = getDepth(height);
+
+		float heightWithFractionalComponent = cell.height / levels.unit;
+        float depth = getDepth(heightWithFractionalComponent);
         if (depth > min) {
             int level = getLevel(depth);
             BlockState layer = getState(level);

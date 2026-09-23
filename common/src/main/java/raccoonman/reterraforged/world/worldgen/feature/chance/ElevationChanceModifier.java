@@ -1,5 +1,8 @@
 package raccoonman.reterraforged.world.worldgen.feature.chance;
 
+import raccoonman.reterraforged.world.worldgen.GeneratorContext;
+import raccoonman.reterraforged.world.worldgen.RTFRandomState;
+import raccoonman.reterraforged.world.worldgen.densityfunction.tile.Tile;
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -8,9 +11,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import raccoonman.reterraforged.world.worldgen.GeneratorContext;
-import raccoonman.reterraforged.world.worldgen.RTFRandomState;
-import raccoonman.reterraforged.world.worldgen.densityfunction.tile.Tile;
 
 class ElevationChanceModifier extends RangeChanceModifier {
 	public static final Codec<ElevationChanceModifier> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -32,14 +32,14 @@ class ElevationChanceModifier extends RangeChanceModifier {
 	protected float getValue(ChanceContext chanceCtx, FeaturePlaceContext<?> placeCtx) {
 		BlockPos pos = placeCtx.origin();
 		@Nullable
-		GeneratorContext generatorContext;
-		if((Object) placeCtx.level().getLevel().getChunkSource().randomState() instanceof RTFRandomState rtfRandomState && (generatorContext = rtfRandomState.generatorContext()) != null) {
+        GeneratorContext generatorContext;
+		if((Object) placeCtx.level().getLevel().getChunkSource().randomState() instanceof RTFRandomState ftfRandomState && (generatorContext = ftfRandomState.generatorContext()) != null) {
 			int x = pos.getX();
 			int z = pos.getZ();
 			int chunkX = SectionPos.blockToSectionCoord(x);
 			int chunkZ = SectionPos.blockToSectionCoord(z);
 			Tile.Chunk chunk = generatorContext.cache.provideAtChunk(chunkX, chunkZ).getChunkReader(chunkX, chunkZ);
-			return rtfRandomState.generatorContext().generator.getHeightmap().levels().elevation(chunk.getCell(x, z).height);
+			return ftfRandomState.generatorContext().generator.getHeightmap().levels().elevation(chunk.getCell(x, z).height);
 		} else {
 			throw new UnsupportedOperationException();
 		}

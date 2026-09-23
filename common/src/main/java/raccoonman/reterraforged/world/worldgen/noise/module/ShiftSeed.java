@@ -5,7 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 record ShiftSeed(Noise input, int shift) implements Noise {
 	public static final Codec<ShiftSeed> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(ShiftSeed::input),
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(ShiftSeed::input),
 		Codec.INT.fieldOf("shift").forGetter(ShiftSeed::shift)
 	).apply(instance, ShiftSeed::new));
 

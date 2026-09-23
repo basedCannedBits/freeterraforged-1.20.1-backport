@@ -2,13 +2,13 @@ package raccoonman.reterraforged.client.gui.screen.presetconfig;
 
 import java.util.Optional;
 
+import raccoonman.reterraforged.client.gui.widget.Slider;
+import raccoonman.reterraforged.client.gui.widget.ValueButton;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.network.chat.Component;
 import raccoonman.reterraforged.client.data.RTFTranslationKeys;
 import raccoonman.reterraforged.client.gui.screen.page.LinkedPageScreen.Page;
 import raccoonman.reterraforged.client.gui.screen.presetconfig.PresetListPage.PresetEntry;
-import raccoonman.reterraforged.client.gui.widget.Slider;
-import raccoonman.reterraforged.client.gui.widget.ValueButton;
 import raccoonman.reterraforged.data.worldgen.preset.settings.ClimateSettings;
 import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
 
@@ -118,7 +118,8 @@ class ClimateSettingsPage extends PresetEditorPage {
 		});
 
 		ClimateSettings.BiomeShape biomeShape = climate.biomeShape;
-		this.biomeSize = PresetWidgets.createIntSlider(biomeShape.biomeSize, 50, 2000, RTFTranslationKeys.GUI_SLIDER_BIOME_SIZE, (slider, value) -> {
+
+		this.biomeSize = PresetWidgets.createIntSlider(biomeShape.biomeSize, ClimateSettings.BiomeShape.MIN_BIOME_SIZE, ClimateSettings.BiomeShape.MAX_BIOME_SIZE, RTFTranslationKeys.GUI_SLIDER_BIOME_SIZE, (slider, value) -> {
 			biomeShape.biomeSize = (int) slider.scaleValue(value);
 			this.regenerate();
 			return value;
@@ -203,7 +204,7 @@ class ClimateSettingsPage extends PresetEditorPage {
 
 	@Override
 	public Optional<Page> previous() {
-		return Optional.of(new CaveSettingsPage(this.screen, this.preset));
+		return Optional.of(new UndergroundSettingsPage(this.screen, this.preset));
 	}
 
 	@Override

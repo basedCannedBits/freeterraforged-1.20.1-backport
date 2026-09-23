@@ -9,7 +9,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import raccoonman.reterraforged.client.gui.screen.presetconfig.PresetEditorPage;
 
 public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelectionList<WidgetList.Entry<T>> {
 	private boolean renderSelected;
@@ -17,7 +16,7 @@ public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelecti
     public WidgetList(Minecraft minecraft, int i, int j, int k, int l, int slotHeight) {
         super(minecraft, i, j, k, l, slotHeight);
     }
-    
+
     public void select(T widget) {
     	for(Entry<T> entry : this.children()) {
     		if(entry.widget.equals(widget)) {
@@ -35,7 +34,7 @@ public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelecti
     public void setRenderSelected(boolean renderSelected) {
     	this.renderSelected = renderSelected;
     }
-    
+
     @Override
     protected boolean isSelectedItem(int i) {
         return this.renderSelected && Objects.equals(this.getSelected(), this.children().get(i));
@@ -76,9 +75,6 @@ public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelecti
             widget.visible = true;
             widget.setWidth(optionWidth);
             widget.height = (height - 1);
-            if(widget instanceof PresetEditorPage.Preview preview) {
-            	widget.height = (widget.getWidth());
-            }
             widget.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
 

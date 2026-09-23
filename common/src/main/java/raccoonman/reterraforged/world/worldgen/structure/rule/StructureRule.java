@@ -4,9 +4,9 @@ import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
 
+import raccoonman.reterraforged.registries.RTFBuiltInRegistries;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.levelgen.RandomState;
-import raccoonman.reterraforged.registries.RTFBuiltInRegistries;
 
 public interface StructureRule {
     public static final Codec<StructureRule> DIRECT_CODEC = RTFBuiltInRegistries.STRUCTURE_RULE_TYPE.byNameCodec().dispatch(StructureRule::codec, Function.identity());

@@ -3,8 +3,9 @@ package raccoonman.reterraforged.data.worldgen.preset.settings;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import raccoonman.reterraforged.world.worldgen.cell.continent.IslandPopulator;
 import raccoonman.reterraforged.world.worldgen.noise.function.DistanceFunction;
+
+import java.util.Optional;
 
 public class WorldSettings {
 	public static final Codec<WorldSettings> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -69,8 +70,8 @@ public class WorldSettings {
     
     public static class ControlPoints {
     	public static final Codec<ControlPoints> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        	Codec.FLOAT.optionalFieldOf("islandInland", IslandPopulator.DEFAULT_INLAND_POINT).forGetter((o) -> o.islandInland),
-        	Codec.FLOAT.optionalFieldOf("islandCoast", IslandPopulator.DEFAULT_COAST_POINT).forGetter((o) -> o.islandCoast),
+            Codec.FLOAT.optionalFieldOf("islandInland").xmap(opt -> opt.orElse(0.0F), Optional::of).forGetter((o) -> o.islandInland),
+            Codec.FLOAT.optionalFieldOf("islandCoast").xmap(opt -> opt.orElse(0.074F), Optional::of).forGetter((o) -> o.islandCoast),
     		Codec.FLOAT.fieldOf("deepOcean").forGetter((o) -> o.deepOcean),
     		Codec.FLOAT.fieldOf("shallowOcean").forGetter((o) -> o.shallowOcean),
     		Codec.FLOAT.fieldOf("beach").forGetter((o) -> o.beach),
@@ -106,30 +107,41 @@ public class WorldSettings {
     }
     
     public static class Properties {
+    	public static final int DEFAULT_OCEAN_DEPTH = 63;
+
     	public static final Codec<Properties> CODEC = RecordCodecBuilder.create(instance -> instance.group(
     		SpawnType.CODEC.fieldOf("spawnType").forGetter((o) -> o.spawnType),
     		Codec.INT.fieldOf("worldHeight").forGetter((o) -> o.worldHeight),
     		Codec.INT.optionalFieldOf("worldDepth", 64).forGetter((o) -> o.worldDepth),
     		Codec.INT.fieldOf("seaLevel").forGetter((o) -> o.seaLevel),
-    		Codec.INT.optionalFieldOf("lavaLevel", -54).forGetter((o) -> o.lavaLevel)
+    		Codec.INT.optionalFieldOf("lavaLevel", -54).forGetter((o) -> o.lavaLevel),
+    		Codec.INT.optionalFieldOf("oceanDepth", DEFAULT_OCEAN_DEPTH).forGetter((o) -> o.oceanDepth),
+            Codec.INT.optionalFieldOf("spawnX", 0).forGetter((o) -> o.spawnX),
+            Codec.INT.optionalFieldOf("spawnZ", 0).forGetter((o) -> o.spawnZ)
     	).apply(instance, Properties::new));
-    	
-        public SpawnType spawnType;
+
+        public static SpawnType spawnType;
         public int worldHeight;
         public int worldDepth;
         public int seaLevel;
         public int lavaLevel;
-        
-        public Properties(SpawnType spawnType, int worldHeight, int worldDepth, int seaLevel, int lavaLevel) {
+        public int oceanDepth;
+        public static int spawnX;
+        public static int spawnZ;
+
+        public Properties(SpawnType spawnType, int worldHeight, int worldDepth, int seaLevel, int lavaLevel, int oceanDepth, int spawnX, int spawnZ) {
         	this.spawnType = spawnType;
         	this.worldHeight = worldHeight;
         	this.worldDepth = worldDepth;
         	this.seaLevel = seaLevel;
         	this.lavaLevel = lavaLevel;
+        	this.oceanDepth = Math.max(10, oceanDepth);
+            this.spawnX = spawnX;
+            this.spawnZ = spawnZ;
         }
-        
+
         public Properties copy() {
-        	return new Properties(this.spawnType, this.worldHeight, this.worldDepth, this.seaLevel, this.lavaLevel);
+        	return new Properties(this.spawnType, this.worldHeight, this.worldDepth, this.seaLevel, this.lavaLevel, this.oceanDepth, this.spawnX, this.spawnZ);
         }
         
         @Deprecated

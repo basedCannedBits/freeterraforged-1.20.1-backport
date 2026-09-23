@@ -2,6 +2,7 @@ package raccoonman.reterraforged.world.worldgen.densityfunction;
 
 import java.util.function.Supplier;
 
+
 import org.jetbrains.annotations.Nullable;
 
 import com.mojang.serialization.Codec;
@@ -11,6 +12,8 @@ import net.minecraft.core.QuartPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.util.KeyDispatchDataCodec;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.biome.Climate;
+import net.minecraft.world.level.levelgen.DensityFunction;
 import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings.ControlPoints;
 import raccoonman.reterraforged.world.worldgen.biome.Continentalness;
 import raccoonman.reterraforged.world.worldgen.cell.Cell;
@@ -23,11 +26,37 @@ import raccoonman.reterraforged.world.worldgen.densityfunction.tile.Tile;
 import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 import raccoonman.reterraforged.world.worldgen.util.PosUtil;
 
-public record CellSampler(Supplier<WorldLookup> deferredLookup, Field field) implements MarkerFunction.Mapped {
+public record CellSampler(Supplier<WorldLookup> deferredLookup, Field field) implements MarkerFunction.Mapped, RTFCellFunction {
+	// Ocean ranges share an inclusive endpoint. A target on that endpoint ties
+	// both biomes, allowing Climate.RTree's previous result to paint scan-line bands.
+	// Stay one quantized climate unit inside the terrain category on either side.
+	private static final float DEEP_OCEAN_MAX = Climate.unquantizeCoord(Climate.quantizeCoord(Continentalness.DEEP_OCEAN.max()) - 1);
+	private static final float SHALLOW_OCEAN_MIN = Climate.unquantizeCoord(Climate.quantizeCoord(Continentalness.OCEAN.min()) + 1);
 	private static final ThreadLocal<Cache2d> CELL = ThreadLocal.withInitial(Cache2d::new);
-	
+	private static final ThreadLocal<Cell> SHARED_FAST_CELL = ThreadLocal.withInitial(Cell::new);
+
 	@Override
-	public double compute(FunctionContext ctx) {
+	public CellSampler rtf$unwrap() { return this; }
+
+	@Override
+	public double compute(DensityFunction.FunctionContext ctx) {
+		try {
+			WorldLookup lookup = this.deferredLookup.get();
+			if (lookup != null) {
+				// Grab the reusable cell for this specific worker thread
+				Cell cell = SHARED_FAST_CELL.get();
+
+				// Populate it via the zero-allocation fast path
+				PointCellCache.fill(lookup, ctx.blockX(), ctx.blockZ(), cell);
+
+				// Read and return the data
+				return this.field.read(cell, lookup.getHeightmap());
+			}
+		} catch (Throwable t) {
+			// Intentionally swallowed to fall through to original logic on failure
+		}
+
+		// Fallback to original single-slot Cache2d path if the cache fails/is uninitialized
 		WorldLookup worldLookup = this.deferredLookup.get();
 		Cell cell = CELL.get().getAndUpdate(worldLookup, ctx.blockX(), ctx.blockZ(), true);
 		return this.field.read(cell, worldLookup.getHeightmap());
@@ -59,13 +88,13 @@ public record CellSampler(Supplier<WorldLookup> deferredLookup, Field field) imp
 			return this.cell;
 		}
 	}
-	
+
 	public class CacheChunk implements MarkerFunction.Mapped {
 		@Nullable
-		private Tile.Chunk chunk;
-		private Cache2d cache2d;
-		private int chunkX, chunkZ;
-		
+		private final Tile.Chunk chunk;
+		private final Cache2d cache2d;
+		private final int chunkX, chunkZ;
+
 		public CacheChunk(@Nullable Tile.Chunk chunk, @Nullable Cache2d cache2d, int chunkX, int chunkZ) {
 			this.chunk = chunk;
 			this.cache2d = cache2d != null ? cache2d : new Cache2d();
@@ -77,12 +106,13 @@ public record CellSampler(Supplier<WorldLookup> deferredLookup, Field field) imp
 		public double compute(FunctionContext ctx) {
 			int blockX = ctx.blockX();
 			int blockZ = ctx.blockZ();
-			int chunkX = SectionPos.blockToSectionCoord(blockX);
-			int chunkZ = SectionPos.blockToSectionCoord(blockZ);
+			int currentChunkX = SectionPos.blockToSectionCoord(blockX);
+			int currentChunkZ = SectionPos.blockToSectionCoord(blockZ);
+
 			WorldLookup worldLookup = CellSampler.this.deferredLookup.get();
-			Cell cell = (this.chunk != null && this.chunkX == chunkX && this.chunkZ == chunkZ) ? 
-				this.chunk.getCell(blockX, blockZ) :
-				this.cache2d.getAndUpdate(worldLookup, blockX, blockZ, false);
+			Cell cell = (this.chunk != null && this.chunkX == currentChunkX && this.chunkZ == currentChunkZ) ?
+					this.chunk.getCell(blockX, blockZ) :
+					this.cache2d.getAndUpdate(worldLookup, blockX, blockZ, true);
 			return CellSampler.this.field.read(cell, worldLookup.getHeightmap());
 		}
 
@@ -127,23 +157,28 @@ public record CellSampler(Supplier<WorldLookup> deferredLookup, Field field) imp
 				float deepOcean = controlPoints.deepOcean;
 				float shallowOcean = controlPoints.shallowOcean;
 				float beach = controlPoints.beach;
-				float coast = controlPoints.coast;
 				float inland = controlPoints.inland;
 				
 				if(cell.terrain == TerrainType.MUSHROOM_FIELDS) {
 					return Continentalness.MUSHROOM_FIELDS.mid();
 				}
-				
+
 				if(cell.terrain.isDeepOcean()) {
+					if(deepOcean <= 0.0F) {
+						return Continentalness.DEEP_OCEAN.mid();
+					}
 					float alpha = NoiseUtil.clamp(cell.continentEdge, 0.0F, deepOcean);
 					alpha = NoiseUtil.lerp(alpha, 0.0F, deepOcean, 0.0F, 1.0F);
-					return NoiseUtil.lerp(Continentalness.DEEP_OCEAN.min() + 0.05F, Continentalness.DEEP_OCEAN.max(), alpha);					
+					return Math.min(DEEP_OCEAN_MAX, NoiseUtil.lerp(Continentalness.DEEP_OCEAN.min() + 0.05F, Continentalness.DEEP_OCEAN.max(), alpha));
 				}
 				
 				if(cell.terrain.isShallowOcean()) {
+					if(shallowOcean <= deepOcean) {
+						return Continentalness.OCEAN.mid();
+					}
 					float alpha = NoiseUtil.clamp(cell.continentEdge, deepOcean, shallowOcean);
 					alpha = NoiseUtil.lerp(alpha, deepOcean, shallowOcean, 0.0F, 0.98F);
-					return NoiseUtil.lerp(Continentalness.OCEAN.min(), Continentalness.OCEAN.max(), alpha);
+					return Math.max(SHALLOW_OCEAN_MIN, NoiseUtil.lerp(Continentalness.OCEAN.min(), Continentalness.OCEAN.max(), alpha));
 				}
 				
 				if(cell.terrain.getDelegate() == TerrainCategory.BEACH && cell.height + cell.beachNoise < levels.water(5)) {
@@ -151,10 +186,22 @@ public record CellSampler(Supplier<WorldLookup> deferredLookup, Field field) imp
 					alpha = NoiseUtil.lerp(alpha, shallowOcean, beach, 0.0F, 1.0F);
 					return NoiseUtil.lerp(Continentalness.COAST.min(), Continentalness.COAST.max(), alpha);
 				}
-			
+
+				if(cell.terrain == TerrainType.ISLAND_BEACH) {
+					return Continentalness.COAST.mid();
+				}
+
 				float alpha = NoiseUtil.clamp(cell.continentEdge, beach, inland);
 				alpha = NoiseUtil.lerp(alpha, beach, inland, 0.0F, 1.0F);
 				return NoiseUtil.lerp(Continentalness.NEAR_INLAND.mid(), Continentalness.FAR_INLAND.max(), alpha);
+
+			}
+		},
+		CONTINENT_EDGE("continent_edge") {
+
+			@Override
+			public float read(Cell cell, Heightmap heightmap) {
+				return cell.continentEdge;
 			}
 		},
 		EROSION("erosion") {
@@ -162,6 +209,13 @@ public record CellSampler(Supplier<WorldLookup> deferredLookup, Field field) imp
 			@Override
 			public float read(Cell cell, Heightmap heightmap) {
 				return cell.erosion;
+			}
+		},
+		TERRAIN_EROSION("terrain_erosion") {
+
+			@Override
+			public float read(Cell cell, Heightmap heightmap) {
+				return cell.terrainErosion;
 			}
 		},
 		WEIRDNESS("weirdness") {
@@ -229,4 +283,13 @@ public record CellSampler(Supplier<WorldLookup> deferredLookup, Field field) imp
 		
 		public abstract float read(Cell cell, Heightmap heightmap);
 	}
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof CellSampler other && this.field == other.field;
+	}
+	@Override
+	public int hashCode() {
+		return field.hashCode();
+	}
+
 }

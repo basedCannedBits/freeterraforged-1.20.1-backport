@@ -2,12 +2,12 @@ package raccoonman.reterraforged.client.gui.screen.presetconfig;
 
 import java.util.Optional;
 
+import raccoonman.reterraforged.client.gui.widget.Slider;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.network.chat.Component;
 import raccoonman.reterraforged.client.data.RTFTranslationKeys;
 import raccoonman.reterraforged.client.gui.screen.page.LinkedPageScreen.Page;
 import raccoonman.reterraforged.client.gui.screen.presetconfig.PresetListPage.PresetEntry;
-import raccoonman.reterraforged.client.gui.widget.Slider;
 import raccoonman.reterraforged.data.worldgen.preset.settings.MiscellaneousSettings;
 import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
 
@@ -16,7 +16,6 @@ public class MiscellaneousPage extends PresetEditorPage {
 	private Slider strataRegionSize;
 	private CycleButton<Boolean> strataDecorator;
 	private CycleButton<Boolean> oreCompatibleStoneOnly;
-	private CycleButton<Boolean> erosionDecorator;
 	private CycleButton<Boolean> plainStoneErosion;
 	private CycleButton<Boolean> naturalSnowDecorator;
 	private CycleButton<Boolean> customBiomeFeatures;
@@ -55,9 +54,6 @@ public class MiscellaneousPage extends PresetEditorPage {
 		this.oreCompatibleStoneOnly = PresetWidgets.createToggle(miscellaneous.oreCompatibleStoneOnly, RTFTranslationKeys.GUI_BUTTON_ORE_COMPATIBLE_STONE_ONLY, (button, value) -> {
 			miscellaneous.oreCompatibleStoneOnly = value;
 		});
-		this.erosionDecorator = PresetWidgets.createToggle(miscellaneous.erosionDecorator, RTFTranslationKeys.GUI_BUTTON_EROSION_DECORATOR, (button, value) -> {
-			miscellaneous.erosionDecorator = value;
-		});
 		this.plainStoneErosion = PresetWidgets.createToggle(miscellaneous.plainStoneErosion, RTFTranslationKeys.GUI_BUTTON_PLAIN_STONE_EROSION, (button, value) -> {
 			miscellaneous.plainStoneErosion = value;
 		});
@@ -89,7 +85,6 @@ public class MiscellaneousPage extends PresetEditorPage {
 		this.left.addWidget(this.strataRegionSize);
 		this.left.addWidget(this.strataDecorator);
 		this.left.addWidget(this.oreCompatibleStoneOnly);
-		this.left.addWidget(this.erosionDecorator);
 		this.left.addWidget(this.plainStoneErosion);
 		this.left.addWidget(this.naturalSnowDecorator);
 		this.left.addWidget(this.customBiomeFeatures);
@@ -102,7 +97,7 @@ public class MiscellaneousPage extends PresetEditorPage {
 	
 	@Override
 	public Optional<Page> previous() {
-		return Optional.of(new StructureSettingsPage(this.screen, this.preset));
+		return Optional.of(new FilterSettingsPage(this.screen, this.preset));
 	}
 
 	@Override

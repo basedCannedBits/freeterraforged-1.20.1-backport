@@ -1,5 +1,8 @@
 package raccoonman.reterraforged.mixin;
 
+import raccoonman.reterraforged.registries.RTFRegistries;
+import raccoonman.reterraforged.world.worldgen.RTFRandomState;
+import raccoonman.reterraforged.world.worldgen.biome.RTFClimateSampler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,9 +15,6 @@ import net.minecraft.world.level.biome.Climate;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.storage.ServerLevelData;
 import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
-import raccoonman.reterraforged.registries.RTFRegistries;
-import raccoonman.reterraforged.world.worldgen.RTFRandomState;
-import raccoonman.reterraforged.world.worldgen.biome.RTFClimateSampler;
 
 @Mixin(MinecraftServer.class)
 class MixinMinecraftServer {
@@ -32,9 +32,9 @@ class MixinMinecraftServer {
 		serverLevel.registryAccess().lookup(RTFRegistries.PRESET).flatMap((registry) -> {
 			return registry.get(Preset.KEY);
 		}).ifPresent((preset) -> {
-			if((Object) randomState instanceof RTFRandomState rtfRandomState && (Object) sampler instanceof RTFClimateSampler rtfClimateSampler) {
-				BlockPos searchCenter = preset.value().world().properties.spawnType.getSearchCenter(rtfRandomState.generatorContext());
-				rtfClimateSampler.setSpawnSearchCenter(searchCenter);
+			if((Object) randomState instanceof RTFRandomState ftfRandomState && (Object) sampler instanceof RTFClimateSampler ftfClimateSampler) {
+				BlockPos searchCenter = preset.value().world().properties.spawnType.getSearchCenter(ftfRandomState.generatorContext(), preset.value().world().properties);
+				ftfClimateSampler.setSpawnSearchCenter(searchCenter);
 			} else {
 				throw new IllegalStateException();
 			}

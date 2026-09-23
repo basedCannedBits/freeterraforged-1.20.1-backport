@@ -4,8 +4,8 @@ import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
 
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import raccoonman.reterraforged.registries.RTFBuiltInRegistries;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 
 public interface ChanceModifier {
 	public static final Codec<ChanceModifier> CODEC = RTFBuiltInRegistries.CHANCE_MODIFIER_TYPE.byNameCodec().dispatch(ChanceModifier::codec, Function.identity());

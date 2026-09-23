@@ -1,12 +1,11 @@
 package raccoonman.reterraforged.world.worldgen.densityfunction;
 
 import com.mojang.serialization.Codec;
-
+import raccoonman.reterraforged.platform.RegistryUtil;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import raccoonman.reterraforged.platform.RegistryUtil;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noise;	
+import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 
 public class RTFDensityFunctions {
 

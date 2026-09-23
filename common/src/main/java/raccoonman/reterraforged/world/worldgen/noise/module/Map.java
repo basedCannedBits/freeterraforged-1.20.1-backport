@@ -5,9 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 record Map(Noise alpha, Noise from, Noise to) implements Noise {
 	public static final Codec<Map> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("alpha").forGetter(Map::alpha),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("from").forGetter(Map::from),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("to").forGetter(Map::to)
+		HOLDER_HELPER_CODEC.fieldOf("alpha").forGetter(Map::alpha),
+		HOLDER_HELPER_CODEC.fieldOf("from").forGetter(Map::from),
+		HOLDER_HELPER_CODEC.fieldOf("to").forGetter(Map::to)
 	).apply(instance, Map::new));
 	
 	@Override

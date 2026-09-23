@@ -3,6 +3,7 @@ package raccoonman.reterraforged.mixin.plugin;
 import java.util.List;
 import java.util.Set;
 
+import raccoonman.reterraforged.compat.biolith.BiolithCompat;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -19,6 +20,11 @@ public class MixinPlugin implements IMixinConfigPlugin {
 		} else {
 			RTFCommon.LOGGER.info("Disabling Terrablender compat");
 		}
+		if(BiolithCompat.isEnabled()) {
+			RTFCommon.LOGGER.info("Enabling Biolith preview compat");
+		} else {
+			RTFCommon.LOGGER.info("Disabling Biolith preview compat");
+		}
 	}
 
 	@Override
@@ -28,7 +34,9 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-		return TBCompat.isTBMixin(mixinClassName) ? TBCompat.isEnabled() : true;
+		if (TBCompat.isTBMixin(mixinClassName)) return TBCompat.isEnabled();
+		if (BiolithCompat.isBiolithMixin(mixinClassName)) return BiolithCompat.isEnabled();
+		return true;
 	}
 
 	@Override

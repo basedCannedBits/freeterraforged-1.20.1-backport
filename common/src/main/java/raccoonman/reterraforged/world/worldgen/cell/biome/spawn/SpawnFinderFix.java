@@ -2,21 +2,20 @@ package raccoonman.reterraforged.world.worldgen.cell.biome.spawn;
 
 import java.util.List;
 
+import raccoonman.reterraforged.world.worldgen.biome.RTFClimateSampler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.QuartPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.biome.Climate.ParameterPoint;
 import net.minecraft.world.level.biome.Climate.Sampler;
 import net.minecraft.world.level.biome.Climate.TargetPoint;
-import raccoonman.reterraforged.world.worldgen.biome.RTFClimateSampler;
-	
-@Deprecated(forRemoval = true)
+
 public class SpawnFinderFix {
 	public Result result;
 
 	public SpawnFinderFix(List<ParameterPoint> list, Sampler sampler) {
-		if ((Object) sampler instanceof RTFClimateSampler rtfClimateSampler) {
-			BlockPos center = rtfClimateSampler.getSpawnSearchCenter();
+		if ((Object) sampler instanceof RTFClimateSampler ftfClimateSampler) {
+			BlockPos center = ftfClimateSampler.getSpawnSearchCenter();
 
 			this.result = SpawnFinderFix.getSpawnPositionAndFitness(list, sampler, center.getX(), center.getZ());
 			this.radialSearch(list, sampler, 2048.0f, 512.0f);

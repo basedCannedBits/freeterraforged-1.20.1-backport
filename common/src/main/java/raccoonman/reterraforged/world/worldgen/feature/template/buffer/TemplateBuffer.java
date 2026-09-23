@@ -1,13 +1,13 @@
 package raccoonman.reterraforged.world.worldgen.feature.template.buffer;
 
+import raccoonman.reterraforged.world.worldgen.feature.template.placement.TemplatePlacement;
+import raccoonman.reterraforged.world.worldgen.feature.template.template.BlockInfo;
+import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import raccoonman.reterraforged.world.worldgen.feature.template.paste.PasteConfig;
-import raccoonman.reterraforged.world.worldgen.feature.template.placement.TemplatePlacement;
-import raccoonman.reterraforged.world.worldgen.feature.template.template.BlockInfo;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 public class TemplateBuffer extends PasteBuffer {
     private LevelAccessor world;

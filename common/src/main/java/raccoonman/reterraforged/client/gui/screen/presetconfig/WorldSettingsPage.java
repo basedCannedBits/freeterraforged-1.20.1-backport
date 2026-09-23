@@ -4,18 +4,19 @@ import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
 
+import raccoonman.reterraforged.client.gui.widget.Slider;
+import raccoonman.reterraforged.world.worldgen.noise.function.DistanceFunction;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import raccoonman.reterraforged.client.data.RTFTranslationKeys;
 import raccoonman.reterraforged.client.gui.screen.page.LinkedPageScreen.Page;
 import raccoonman.reterraforged.client.gui.screen.presetconfig.PresetListPage.PresetEntry;
-import raccoonman.reterraforged.client.gui.widget.Slider;
+import raccoonman.reterraforged.data.worldgen.preset.settings.ClimateSettings;
 import raccoonman.reterraforged.data.worldgen.preset.settings.ContinentType;
 import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
 import raccoonman.reterraforged.data.worldgen.preset.settings.SpawnType;
 import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings;
-import raccoonman.reterraforged.world.worldgen.noise.function.DistanceFunction;
 
 public class WorldSettingsPage extends PresetEditorPage {
 	private CycleButton<ContinentType> continentType;
@@ -36,9 +37,10 @@ public class WorldSettingsPage extends PresetEditorPage {
 	private Slider coast;
 	private Slider inland;
 	
-	private CycleButton<SpawnType> spawnType;
+	public CycleButton<SpawnType> spawnType;
 	private Slider worldHeight;
 	private Slider worldDepth;
+	private Slider oceanDepth;
 	private Slider seaLevel;
 	private Slider lavaLevel;
 	
@@ -65,9 +67,10 @@ public class WorldSettingsPage extends PresetEditorPage {
 			ImmutableList.of(
 				ContinentType.MULTI,
 				ContinentType.SINGLE,
-				ContinentType.MULTI_IMPROVED
+				ContinentType.MULTI_IMPROVED,
+				ContinentType.UPLIFT
 			),
-			continent.continentType, RTFTranslationKeys.GUI_BUTTON_CONTINENT_TYPE, 
+			continent.continentType, RTFTranslationKeys.GUI_BUTTON_CONTINENT_TYPE,
 			(button, value) -> {
 				continent.continentType = value;
 				this.applyContinentType(value);
@@ -155,6 +158,7 @@ public class WorldSettingsPage extends PresetEditorPage {
 		});
 		this.inland = PresetWidgets.createFloatSlider(controlPoints.inland, 0.0F, 1.0F, RTFTranslationKeys.GUI_SLIDER_INLAND, (slider, value) -> {
 			value = Math.max(value, this.coast.getValue());
+			value = Math.max(value, 0.001);
 			controlPoints.inland = (float) slider.scaleValue(value);
 			this.regenerate();
 			return value;
@@ -166,16 +170,26 @@ public class WorldSettingsPage extends PresetEditorPage {
 		this.worldHeight = PresetWidgets.createIntSlider(properties.worldHeight, 0, 1024, RTFTranslationKeys.GUI_SLIDER_WORLD_HEIGHT, (slider, value) -> {
 			int nearestMultiple = Math.max(getNearestMultiple(slider, (float) value, 16), 16);
 			properties.worldHeight = nearestMultiple;
+			this.updateUndergroundBiomeVerticalSize(properties);
 			this.regenerate();
 			return slider.getSliderValue(nearestMultiple);
 		});
 		this.worldDepth = PresetWidgets.createIntSlider(properties.worldDepth, 0, 1024, RTFTranslationKeys.GUI_SLIDER_WORLD_DEPTH, (slider, value) -> {
 			int nearestMultiple = getNearestMultiple(slider, (float) value, 16);
 			properties.worldDepth = nearestMultiple;
+			this.updateOceanDepthRange(properties);
+			this.updateUndergroundBiomeVerticalSize(properties);
 			return slider.getSliderValue(nearestMultiple);
+		});
+		this.oceanDepth = PresetWidgets.createIntSlider(properties.oceanDepth, 10, properties.seaLevel + properties.worldDepth - 10, RTFTranslationKeys.GUI_SLIDER_OCEAN_DEPTH, (slider, value) -> {
+			int depth = (int) slider.scaleValue(value);
+			properties.oceanDepth = depth;
+			this.regenerate();
+			return value;
 		});
 		this.seaLevel = PresetWidgets.createIntSlider(properties.seaLevel, 0, 255, RTFTranslationKeys.GUI_SLIDER_SEA_LEVEL, (slider, value) -> {
 			properties.seaLevel = (int) slider.scaleValue(value);
+			this.updateOceanDepthRange(properties);
 			this.regenerate();
 			return value;
 		});
@@ -208,14 +222,13 @@ public class WorldSettingsPage extends PresetEditorPage {
 		this.left.addWidget(this.spawnType);
 		this.left.addWidget(this.worldHeight);
 		this.left.addWidget(this.worldDepth);
+		this.left.addWidget(this.oceanDepth);
 		this.left.addWidget(this.seaLevel);
 		this.left.addWidget(this.lavaLevel);
 	}
 
 	@Override
-	public Optional<Page> previous() {
-		return Optional.of(new PresetListPage(this.screen));
-	}
+	public Optional<Page> previous() { return Optional.empty();	}
 
 	@Override
 	public Optional<Page> next() {
@@ -225,14 +238,41 @@ public class WorldSettingsPage extends PresetEditorPage {
 	private void applyContinentType(ContinentType type) {
 		this.continentShape.active = type == ContinentType.MULTI || type == ContinentType.SINGLE;
 		
-		boolean isMultiImproved = type == ContinentType.MULTI_IMPROVED;
+		boolean isMultiImproved = type == ContinentType.MULTI_IMPROVED || type == ContinentType.UPLIFT;
 		this.continentSkipping.active = isMultiImproved;
 		this.continentSizeVariance.active = isMultiImproved;
 		this.continentNoiseOctaves.active = isMultiImproved;
 		this.continentNoiseGain.active = isMultiImproved;
 		this.continentNoiseLacunarity.active = isMultiImproved;
+
+		// ensures that terrains never drop below continental uplift resulting in floating rivers
+		boolean isUpliftContinent = type == ContinentType.UPLIFT;
+		if(isUpliftContinent){
+			this.preset.getPreset().terrain().general.globalVerticalScale = Math.max(this.preset.getPreset().terrain().general.globalVerticalScale, 1.0F);
+			this.preset.getPreset().terrain().steppe.baseScale = Math.max(this.preset.getPreset().terrain().steppe.baseScale, 2.0F);
+			this.preset.getPreset().terrain().plains.baseScale = Math.max(this.preset.getPreset().terrain().plains.baseScale, 2.0F);
+			this.preset.getPreset().terrain().hills.baseScale = Math.max(this.preset.getPreset().terrain().hills.baseScale, 1.0F);
+			this.preset.getPreset().terrain().dales.baseScale = Math.max(this.preset.getPreset().terrain().dales.baseScale, 1.0F);
+			this.preset.getPreset().terrain().badlands.baseScale = Math.max(this.preset.getPreset().terrain().badlands.baseScale, 1.0F);
+			this.preset.getPreset().terrain().mountains.baseScale = Math.max(this.preset.getPreset().terrain().mountains.baseScale, 1.0F);
+			this.preset.getPreset().terrain().plateau.baseScale = Math.max(this.preset.getPreset().terrain().plateau.baseScale, 1.0F);
+			this.preset.getPreset().terrain().volcano.baseScale = Math.max(this.preset.getPreset().terrain().volcano.baseScale, 1.0F);
+		}
 	}
 	
+	private void updateOceanDepthRange(WorldSettings.Properties properties) {
+		this.oceanDepth.setRange(10, properties.seaLevel + properties.worldDepth - 10);
+		properties.oceanDepth = (int) this.oceanDepth.scaleValue((float) this.oceanDepth.getValue());
+	}
+
+	private void updateUndergroundBiomeVerticalSize(WorldSettings.Properties properties) {
+		ClimateSettings.BiomeShape biomeShape = this.preset.getPreset().climate().biomeShape;
+		biomeShape.undergroundBiomeVerticalSize = Math.min(
+			biomeShape.undergroundBiomeVerticalSize,
+			PresetSettingsBounds.maximumUndergroundBiomeVerticalSize(properties.worldHeight, properties.worldDepth)
+		);
+	}
+
 	private static int getNearestMultiple(Slider slider, float value, int multiple)  {
 		int lerpedValue = (int) slider.lerpValue(value);
 		int lerpedMultiple = (int) slider.lerpValue((float) slider.getSliderValue(multiple));

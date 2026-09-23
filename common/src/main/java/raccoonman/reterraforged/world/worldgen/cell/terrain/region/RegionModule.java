@@ -1,15 +1,14 @@
 package raccoonman.reterraforged.world.worldgen.cell.terrain.region;
 
-import raccoonman.reterraforged.world.worldgen.cell.Cell;
-import raccoonman.reterraforged.world.worldgen.cell.CellPopulator;
 import raccoonman.reterraforged.world.worldgen.cell.heightmap.RegionConfig;
 import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil.Vec2f;
 import raccoonman.reterraforged.world.worldgen.noise.domain.Domain;
 import raccoonman.reterraforged.world.worldgen.noise.domain.Domains;
 import raccoonman.reterraforged.world.worldgen.noise.function.DistanceFunction;
 import raccoonman.reterraforged.world.worldgen.noise.function.EdgeFunction;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noises;	
+import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
+import raccoonman.reterraforged.world.worldgen.cell.Cell;
+import raccoonman.reterraforged.world.worldgen.cell.CellPopulator;
 
 public class RegionModule implements CellPopulator {
     private int seed;
@@ -47,7 +46,7 @@ public class RegionModule implements CellPopulator {
             for (int dx = -1; dx <= 1; ++dx) {
                 int cx = xi + dx;
                 int cy = yi + dy;
-                Vec2f vec = NoiseUtil.cell(this.seed, cx, cy);
+                NoiseUtil.Vec2f vec = NoiseUtil.cell(this.seed, cx, cy);
                 float vecX = cx + vec.x() * 0.7F;
                 float vecY = cy + vec.y() * 0.7F;
                 float distance = dist.apply(vecX - px, vecY - py);
@@ -64,6 +63,11 @@ public class RegionModule implements CellPopulator {
         }
         cell.terrainRegionId = this.cellValue(this.seed, cellX, cellY);
         cell.terrainRegionEdge = this.edgeValue(edgeDistance, edgeDistance2);
+        
+        // Store terrain Voronoi cell center in world coordinates for use in climate
+        NoiseUtil.Vec2f winningVec = NoiseUtil.cell(this.seed, cellX, cellY);
+        cell.terrainRegionCenterX = (cellX + winningVec.x() * 0.7F) / this.frequency;
+        cell.terrainRegionCenterZ = (cellY + winningVec.y() * 0.7F) / this.frequency;
     }
     
     private float cellValue(int seed, int cellX, int cellY) {

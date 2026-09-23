@@ -7,10 +7,10 @@ import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 record AdvancedTerrace(Noise source, Noise modulation, Noise mask, Noise slope, float blendMin, float blendMax, int steps, int octaves) implements Noise {
 	public static final Codec<AdvancedTerrace> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("source").forGetter(AdvancedTerrace::source),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("modulation").forGetter(AdvancedTerrace::modulation),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("mask").forGetter(AdvancedTerrace::mask),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("slope").forGetter(AdvancedTerrace::slope),
+		HOLDER_HELPER_CODEC.fieldOf("source").forGetter(AdvancedTerrace::source),
+		HOLDER_HELPER_CODEC.fieldOf("modulation").forGetter(AdvancedTerrace::modulation),
+		HOLDER_HELPER_CODEC.fieldOf("mask").forGetter(AdvancedTerrace::mask),
+		HOLDER_HELPER_CODEC.fieldOf("slope").forGetter(AdvancedTerrace::slope),
 		Codec.FLOAT.fieldOf("blend_min").forGetter(AdvancedTerrace::blendMin),
 		Codec.FLOAT.fieldOf("blend_max").forGetter(AdvancedTerrace::blendMax),
 		Codec.INT.fieldOf("steps").forGetter(AdvancedTerrace::steps),

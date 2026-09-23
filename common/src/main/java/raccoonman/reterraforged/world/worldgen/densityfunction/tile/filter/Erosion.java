@@ -2,13 +2,14 @@ package raccoonman.reterraforged.world.worldgen.densityfunction.tile.filter;
 
 import java.util.function.IntFunction;
 
-import raccoonman.reterraforged.data.worldgen.preset.settings.FilterSettings;
 import raccoonman.reterraforged.world.worldgen.GeneratorContext;
 import raccoonman.reterraforged.world.worldgen.cell.Cell;
 import raccoonman.reterraforged.world.worldgen.cell.heightmap.Levels;
-import raccoonman.reterraforged.world.worldgen.densityfunction.tile.Size;
 import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 import raccoonman.reterraforged.world.worldgen.util.FastRandom;
+import raccoonman.reterraforged.world.worldgen.util.Seed;
+import raccoonman.reterraforged.data.worldgen.preset.settings.FilterSettings;
+import raccoonman.reterraforged.world.worldgen.densityfunction.tile.Size;
 
 public class Erosion implements Filter {
     private final float erodeSpeed;
@@ -191,7 +192,7 @@ public class Erosion implements Filter {
     }
     
     public static IntFunction<Erosion> factory(final GeneratorContext context) {
-        return new Factory(context.seed.root(), context.preset.filters(), context.levels);
+        return new Factory(Seed.toInt(context.seed.root()), context.preset.filters(), context.levels);
     }
     
     private static class TerrainPos

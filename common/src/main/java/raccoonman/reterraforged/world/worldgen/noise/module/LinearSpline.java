@@ -11,14 +11,11 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
 import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noise.Visitor;
 
 public record LinearSpline(Noise input, List<Pair<Float, Noise>> points, float minValue, float maxValue) implements Noise {
 	public static final Codec<LinearSpline> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(LinearSpline::input),
-		ExtraCodecs.nonEmptyList(Codec.pair(Codec.FLOAT, Noise.HOLDER_HELPER_CODEC).listOf()).fieldOf("points").forGetter(LinearSpline::points)
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(LinearSpline::input),
+		ExtraCodecs.nonEmptyList(Codec.pair(Codec.FLOAT, HOLDER_HELPER_CODEC).listOf()).fieldOf("points").forGetter(LinearSpline::points)
 	).apply(instance, LinearSpline::new));
 	
 	public LinearSpline(Noise input, List<Pair<Float, Noise>> points) {

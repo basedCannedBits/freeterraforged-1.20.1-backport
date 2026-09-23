@@ -1,11 +1,11 @@
 package raccoonman.reterraforged.world.worldgen.cell.rivermap;
 
 import raccoonman.reterraforged.concurrent.cache.ExpiringEntry;
-import raccoonman.reterraforged.world.worldgen.cell.Cell;
-import raccoonman.reterraforged.world.worldgen.cell.heightmap.Heightmap;
 import raccoonman.reterraforged.world.worldgen.cell.rivermap.gen.GenWarp;
 import raccoonman.reterraforged.world.worldgen.cell.rivermap.river.Network;
 import raccoonman.reterraforged.world.worldgen.noise.domain.Domain;
+import raccoonman.reterraforged.world.worldgen.cell.Cell;
+import raccoonman.reterraforged.world.worldgen.cell.heightmap.Heightmap;
 
 public class Rivermap implements ExpiringEntry {
     private int x;

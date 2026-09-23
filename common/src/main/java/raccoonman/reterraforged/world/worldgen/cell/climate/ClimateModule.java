@@ -1,22 +1,23 @@
 package raccoonman.reterraforged.world.worldgen.cell.climate;
 
-import raccoonman.reterraforged.data.worldgen.preset.settings.ClimateSettings;
-import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings;
-import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings.ControlPoints;
-import raccoonman.reterraforged.world.worldgen.cell.Cell;
-import raccoonman.reterraforged.world.worldgen.cell.biome.type.BiomeType;
+import raccoonman.reterraforged.world.worldgen.biome.Humidity;
+import raccoonman.reterraforged.world.worldgen.biome.Temperature;
 import raccoonman.reterraforged.world.worldgen.cell.continent.Continent;
 import raccoonman.reterraforged.world.worldgen.cell.heightmap.Levels;
+import raccoonman.reterraforged.world.worldgen.cell.terrain.TerrainCategory;
 import raccoonman.reterraforged.world.worldgen.cell.terrain.TerrainType;
 import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil.Vec2f;
 import raccoonman.reterraforged.world.worldgen.noise.function.DistanceFunction;
 import raccoonman.reterraforged.world.worldgen.noise.function.EdgeFunction;
 import raccoonman.reterraforged.world.worldgen.noise.module.LegacyMoisture;
 import raccoonman.reterraforged.world.worldgen.noise.module.LegacyTemperature;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
 import raccoonman.reterraforged.world.worldgen.util.Seed;
+import raccoonman.reterraforged.data.worldgen.preset.settings.ClimateSettings;
+import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings;
+import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings.ControlPoints;
+import raccoonman.reterraforged.world.worldgen.cell.Cell;
+import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 
 public class ClimateModule {
 	private int seed;
@@ -32,7 +33,7 @@ public class ClimateModule {
 	private Levels levels;
 	
 	public ClimateModule(Seed seed, Continent continent, WorldSettings.ControlPoints controlPoints, ClimateSettings climateSettings, Levels levels) {
-		int biomeSize = climateSettings.biomeShape.biomeSize;
+		int biomeSize = climateSettings.biomeShape.biomeSize();
 		
 		float tempScaler = (float) climateSettings.temperature.scale;
 		float moistScaler = climateSettings.moisture.scale * 2.5F;
@@ -107,7 +108,7 @@ public class ClimateModule {
 			for (int dx = -1; dx <= 1; ++dx) {
 				int cx = xr + dx;
 				int cz = zr + dz;
-				Vec2f vec = NoiseUtil.cell(this.seed, cx, cz);
+				NoiseUtil.Vec2f vec = NoiseUtil.cell(this.seed, cx, cz);
 				float cxf = cx + vec.x();
 				float czf = cz + vec.y();
 				float distance = dist.apply(cxf - x, czf - z);
@@ -136,11 +137,52 @@ public class ClimateModule {
 		}
 		cell.regionMoisture = this.modifyMoisture(cell.regionMoisture, continentEdge);
 
-		cell.biome = BiomeType.get(cell.regionTemperature, cell.regionMoisture);
 		cell.regionTemperature = this.modifyTemp(cell.height, cell.regionTemperature, originalX, originalZ);
 
-        cell.temperature = cell.biome.getTemperature(cell.biomeRegionId);
-        cell.moisture = cell.biome.getMoisture(cell.biomeRegionId);
+		float queryTemp = this.temperature.compute(x, z, 0);
+		float queryMoist = this.moisture.compute(x, z, 0);
+		queryMoist = this.modifyMoisture(queryMoist, continentEdge);
+		queryTemp = this.modifyTemp(cell.height, queryTemp, originalX, originalZ);
+		cell.temperature = queryTemp * 2.0F - 1.0F;
+		cell.moisture = queryMoist * 2.0F - 1.0F;
+
+		if (cell.terrain != null && cell.terrain.getCategory() == TerrainCategory.HIGHLAND) {
+			float mtnFreqX = cell.terrainRegionCenterX * this.biomeFreq;
+			float mtnFreqZ = cell.terrainRegionCenterZ * this.biomeFreq;
+
+			float mtnTemp = this.temperature.compute(mtnFreqX, mtnFreqZ, 0);
+			float mtnMoist = this.moisture.compute(mtnFreqX, mtnFreqZ, 0);
+			mtnMoist = this.modifyMoisture(mtnMoist, continentEdge);
+			mtnTemp = this.modifyTemp(cell.height, mtnTemp, originalX, originalZ);
+			cell.temperature = mtnTemp * 2.0F - 1.0F;
+			cell.moisture = mtnMoist * 2.0F - 1.0F;
+		}
+
+		if (cell.terrain == TerrainType.ISLAND_BEACH || cell.terrain == TerrainType.ISLAND || cell.terrain == TerrainType.ISLAND_MOUNTAINS) {
+
+			if (madeMushroomIslands(cell)){ return; }
+
+			float islTemp = this.temperature.compute(centerX, centerZ, 0);
+			float islMoist = this.moisture.compute(centerX, centerZ, 0);
+			islMoist = this.modifyMoisture(islMoist, continentEdge);
+			islTemp = this.modifyTemp(cell.height, islTemp, originalX, originalZ);
+			cell.temperature = islTemp * 2.0F - 1.0F;
+			cell.moisture = islMoist * 2.0F - 1.0F;
+		}
+	}
+
+	private boolean madeMushroomIslands(Cell cell)
+	{
+		// Check for a rare noise threshold (e.g., top 5% of macroBiomeId)
+		if (cell.macroBiomeId > 0.95F) {
+			cell.terrain = TerrainType.MUSHROOM_FIELDS;
+
+			// Set appropriate temperature and moisture for mushrooms/mycelium
+			cell.temperature = Temperature.LEVEL_2.mid(); // Moderate
+			cell.moisture = Humidity.LEVEL_4.mid();       // Wet
+			return true;
+		}
+		return false;
 	}
 
 	private float modifyTemp(float height, float temp, float x, float z) {
@@ -174,7 +216,8 @@ public class ClimateModule {
 	}
 
 	private void modifyTerrain(Cell cell, float continentEdge) {
-		if (cell.terrain.isOverground() && !cell.terrain.overridesCoast() && continentEdge <= this.controlPoints.coastMarker()) {
+		if (cell.terrain.isOverground() && !cell.terrain.overridesCoast() && continentEdge <= this.controlPoints.coastMarker()
+			&& cell.terrain != TerrainType.ISLAND && cell.terrain != TerrainType.ISLAND_BEACH && cell.terrain != TerrainType.ISLAND_MOUNTAINS) {
 			cell.terrain = TerrainType.COAST;
 		}
 	}

@@ -3,8 +3,8 @@ package raccoonman.reterraforged.world.worldgen.noise.module;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 import raccoonman.reterraforged.world.worldgen.noise.function.Interpolation;
+import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 public record Simplex2(float frequency, int octaves, float lacunarity, float gain, Interpolation interpolation, float min, float max) implements Noise {
 	public static final Codec<Simplex2> CODEC = RecordCodecBuilder.create(instance -> instance.group(

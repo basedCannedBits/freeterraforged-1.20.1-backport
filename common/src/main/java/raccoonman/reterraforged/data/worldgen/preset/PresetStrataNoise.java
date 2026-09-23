@@ -1,11 +1,11 @@
 package raccoonman.reterraforged.data.worldgen.preset;
 
-import net.minecraft.data.worldgen.BootstapContext;
-import net.minecraft.resources.ResourceKey;
 import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
 import raccoonman.reterraforged.world.worldgen.util.Seed;
+import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.resources.ResourceKey;
+import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 
 public class PresetStrataNoise {
 	public static final ResourceKey<Noise> STRATA_SELECTOR = createKey("selector");

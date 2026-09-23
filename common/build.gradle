@@ -1,5 +1,5 @@
 architectury {
-    common("forge", "fabric")
+    common("forge")
 }
 
 loom {
@@ -19,4 +19,10 @@ repositories {
 
 remapJar {
     archiveClassifier.set("${rootProject.minecraft_version}")
+}
+dependencies {
+	testImplementation "org.junit.jupiter:junit-jupiter:5.11.4"
+}
+test {
+	useJUnitPlatform()
 }

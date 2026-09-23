@@ -2,12 +2,11 @@ package raccoonman.reterraforged.world.worldgen.feature.placement.poisson;
 
 import java.util.Random;
 
+import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
+import raccoonman.reterraforged.world.worldgen.util.PosUtil;
 import it.unimi.dsi.fastutil.longs.LongArrayList;
 import it.unimi.dsi.fastutil.longs.LongList;
 import it.unimi.dsi.fastutil.longs.LongLists;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil.Vec2f;
-import raccoonman.reterraforged.world.worldgen.util.PosUtil;
 
 public class FastPoisson {
     public static final ThreadLocal<FastPoisson> LOCAL_POISSON = ThreadLocal.withInitial(FastPoisson::new);
@@ -105,7 +104,7 @@ public class FastPoisson {
         z *= context.frequency();
         int cellX = NoiseUtil.floor(x);
         int cellZ = NoiseUtil.floor(z);
-        Vec2f vec = NoiseUtil.cell(seed, cellX, cellZ);
+        NoiseUtil.Vec2f vec = NoiseUtil.cell(seed, cellX, cellZ);
         int px = NoiseUtil.floor((cellX + context.pad() + vec.x() * context.jitter()) * context.scale());
         int pz = NoiseUtil.floor((cellZ + context.pad() + vec.y() * context.jitter()) * context.scale());
         return PosUtil.pack(px, pz);

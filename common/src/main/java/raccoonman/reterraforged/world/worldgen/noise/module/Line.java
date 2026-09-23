@@ -11,9 +11,9 @@ public record Line(float x1, float z1, float x2, float z2, Noise radiusSq, Noise
 		Codec.FLOAT.fieldOf("z1").forGetter(Line::z1),
 		Codec.FLOAT.fieldOf("x2").forGetter(Line::x2),
 		Codec.FLOAT.fieldOf("z2").forGetter(Line::z2),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("radiusSq").forGetter(Line::radiusSq),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("radiusSq").forGetter(Line::radiusSq),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("radiusSq").forGetter(Line::radiusSq),
+		HOLDER_HELPER_CODEC.fieldOf("radiusSq").forGetter(Line::radiusSq),
+		HOLDER_HELPER_CODEC.fieldOf("radiusSq").forGetter(Line::radiusSq),
+		HOLDER_HELPER_CODEC.fieldOf("radiusSq").forGetter(Line::radiusSq),
 		Codec.FLOAT.fieldOf("feather").forGetter(Line::feather)
 	).apply(instance, Line::new));
 	

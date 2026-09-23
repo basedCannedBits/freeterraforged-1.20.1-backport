@@ -1,8 +1,8 @@
 package raccoonman.reterraforged.world.worldgen.cell.rivermap.wetland;
 
-import raccoonman.reterraforged.data.worldgen.preset.settings.RiverSettings;
 import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 import raccoonman.reterraforged.world.worldgen.util.Variance;
+import raccoonman.reterraforged.data.worldgen.preset.settings.RiverSettings;
 
 public class WetlandConfig {
     public int skipSize;

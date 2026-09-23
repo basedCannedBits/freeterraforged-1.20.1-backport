@@ -4,9 +4,9 @@ import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
 
+import raccoonman.reterraforged.registries.RTFBuiltInRegistries;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelAccessor;
-import raccoonman.reterraforged.registries.RTFBuiltInRegistries;
 import raccoonman.reterraforged.world.worldgen.feature.template.template.TemplateContext;
 
 public interface TemplateDecorator<T extends TemplateContext> {

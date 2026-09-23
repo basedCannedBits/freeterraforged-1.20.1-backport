@@ -1,11 +1,10 @@
 package raccoonman.reterraforged.world.worldgen.noise.domain;
 
 import com.mojang.serialization.Codec;
-
+import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
 import raccoonman.reterraforged.platform.RegistryUtil;
 import raccoonman.reterraforged.registries.RTFBuiltInRegistries;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
 
 public class Domains {
 
@@ -19,7 +18,7 @@ public class Domains {
 
 	public static Domain domainPerlin(int seed, int scale, int octaves, float strength) {
 		return domain(
-			Noises.perlin(seed, scale, octaves), 
+			Noises.perlin(seed, scale, octaves),
 			Noises.perlin(seed + 1, scale, octaves), 
 			Noises.constant(strength)
 		);

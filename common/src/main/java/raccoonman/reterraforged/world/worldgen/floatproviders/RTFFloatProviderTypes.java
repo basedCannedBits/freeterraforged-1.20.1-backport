@@ -1,11 +1,10 @@
 package raccoonman.reterraforged.world.worldgen.floatproviders;
 
 import com.mojang.serialization.Codec;
-
+import raccoonman.reterraforged.platform.RegistryUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.valueproviders.FloatProvider;
 import net.minecraft.util.valueproviders.FloatProviderType;
-import raccoonman.reterraforged.platform.RegistryUtil;
 
 public class RTFFloatProviderTypes {
 	public static final FloatProviderType<LegacyCanyonYScale> LEGACY_CANYON_Y_SCALE = register("legacy_canyon_y_scale", LegacyCanyonYScale.CODEC);

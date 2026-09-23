@@ -1,5 +1,7 @@
 package raccoonman.reterraforged.mixin;
 
+import raccoonman.reterraforged.registries.RTFRegistries;
+import raccoonman.reterraforged.world.worldgen.structure.rule.StructureRule;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -11,8 +13,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.Structure.GenerationContext;
 import net.minecraft.world.level.levelgen.structure.Structure.GenerationStub;
-import raccoonman.reterraforged.registries.RTFRegistries;
-import raccoonman.reterraforged.world.worldgen.structure.rule.StructureRule;
 
 @Mixin(Structure.class)
 public class MixinStructure {

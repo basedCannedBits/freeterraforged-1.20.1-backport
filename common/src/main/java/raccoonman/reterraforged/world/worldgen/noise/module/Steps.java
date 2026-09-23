@@ -3,15 +3,15 @@ package raccoonman.reterraforged.world.worldgen.noise.module;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 import raccoonman.reterraforged.world.worldgen.noise.function.CurveFunction;
+import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 public record Steps(Noise input, Noise steps, Noise slopeMin, Noise slopeMax, CurveFunction slopeCurve) implements Noise {
 	public static final Codec<Steps> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Steps::input),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("steps").forGetter(Steps::steps),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("slope_min").forGetter(Steps::slopeMin),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("slope_max").forGetter(Steps::slopeMax),
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Steps::input),
+		HOLDER_HELPER_CODEC.fieldOf("steps").forGetter(Steps::steps),
+		HOLDER_HELPER_CODEC.fieldOf("slope_min").forGetter(Steps::slopeMin),
+		HOLDER_HELPER_CODEC.fieldOf("slope_max").forGetter(Steps::slopeMax),
 		CurveFunction.CODEC.fieldOf("slope_curve").forGetter(Steps::slopeCurve)
 	).apply(instance, Steps::new));
 	

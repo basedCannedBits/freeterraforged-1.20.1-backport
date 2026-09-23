@@ -5,8 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 record Add(Noise input1, Noise input2) implements Noise {
 	public static final Codec<Add> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input1").forGetter(Add::input1),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input2").forGetter(Add::input2)
+		HOLDER_HELPER_CODEC.fieldOf("input1").forGetter(Add::input1),
+		HOLDER_HELPER_CODEC.fieldOf("input2").forGetter(Add::input2)
 	).apply(instance, Add::new));
 	
 	@Override

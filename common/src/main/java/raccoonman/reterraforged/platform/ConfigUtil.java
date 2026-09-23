@@ -9,14 +9,18 @@ import raccoonman.reterraforged.RTFCommon;
 
 public class ConfigUtil {
 	public static final Path RTF_CONFIG_PATH = getConfigPath().resolve(RTFCommon.MOD_ID);
-	public static final Path LEGACY_CONFIG_PATH = getConfigPath().resolve(RTFCommon.LEGACY_MOD_ID);
+	public static final Path LEGACY_TF_CONFIG_PATH = getConfigPath().resolve(RTFCommon.LEGACY_TF_MOD_ID);
+	public static final Path LEGACY_RTF_CONFIG_PATH = getConfigPath().resolve(RTFCommon.LEGACY_RTF_MOD_ID);
 	
-	public static Path rtf(String path) {
+	public static Path ftf(String path) {
 		return RTF_CONFIG_PATH.resolve(path);
 	}
 	
-	public static Path legacy(String path) {
-		return LEGACY_CONFIG_PATH.resolve(path);
+	public static Path legacy_tf(String path) {
+		return LEGACY_TF_CONFIG_PATH.resolve(path);
+	}
+	public static Path legacy_rtf(String path) {
+		return LEGACY_RTF_CONFIG_PATH.resolve(path);
 	}
 	
 	@ExpectPlatform

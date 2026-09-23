@@ -8,19 +8,18 @@ import java.util.function.Function;
 
 import com.google.common.collect.ImmutableList;
 
+import raccoonman.reterraforged.client.data.RTFTranslationKeys;
+import raccoonman.reterraforged.client.gui.Toasts;
+import raccoonman.reterraforged.client.gui.Tooltips;
+import raccoonman.reterraforged.client.gui.widget.Label;
+import raccoonman.reterraforged.client.gui.widget.Slider;
+import raccoonman.reterraforged.client.gui.widget.ValueButton;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import raccoonman.reterraforged.client.data.RTFTranslationKeys;
-import raccoonman.reterraforged.client.gui.Toasts;
-import raccoonman.reterraforged.client.gui.Tooltips;
-import raccoonman.reterraforged.client.gui.widget.Label;
-import raccoonman.reterraforged.client.gui.widget.Slider;
-import raccoonman.reterraforged.client.gui.widget.Slider.Format;
-import raccoonman.reterraforged.client.gui.widget.ValueButton;
 
 @Deprecated
 final class PresetWidgets {
@@ -47,11 +46,11 @@ final class PresetWidgets {
 	}
 
 	public static Slider createFloatSlider(float initial, float min, float max, String text, Slider.Callback callback) {
-		return createSlider(initial, min, max, text, Format.FLOAT, callback);
+		return createSlider(initial, min, max, text, Slider.Format.FLOAT, callback);
 	}
 	
 	public static Slider createIntSlider(int initial, int min, int max, String text, Slider.Callback callback) {
-		return createSlider(initial, min, max, text, Format.INT, callback);
+		return createSlider(initial, min, max, text, Slider.Format.INT, callback);
 	}
 	
 	public static <T extends Enum<T>> CycleButton<T> createCycle(T[] values, T initial, String text, CycleButton.OnValueChange<T> callback) {

@@ -2,15 +2,14 @@ package raccoonman.reterraforged.data.worldgen.preset.settings;
 
 import com.mojang.serialization.Codec;
 
-import net.minecraft.util.StringRepresentable;
 import raccoonman.reterraforged.world.worldgen.GeneratorContext;
 import raccoonman.reterraforged.world.worldgen.cell.continent.Continent;
 import raccoonman.reterraforged.world.worldgen.cell.continent.advanced.AdvancedContinentGenerator;
-import raccoonman.reterraforged.world.worldgen.cell.continent.fancy.FancyContinentGenerator;
-import raccoonman.reterraforged.world.worldgen.cell.continent.infinite.InfiniteContinentGenerator;
 import raccoonman.reterraforged.world.worldgen.cell.continent.simple.MultiContinentGenerator;
 import raccoonman.reterraforged.world.worldgen.cell.continent.simple.SingleContinentGenerator;
+import raccoonman.reterraforged.world.worldgen.cell.continent.uplift.UpliftContinentGenerator;
 import raccoonman.reterraforged.world.worldgen.util.Seed;
+import net.minecraft.util.StringRepresentable;
 
 public enum ContinentType implements StringRepresentable {
     MULTI {
@@ -33,19 +32,12 @@ public enum ContinentType implements StringRepresentable {
         public AdvancedContinentGenerator create(Seed seed, GeneratorContext context) {
             return new AdvancedContinentGenerator(seed, context);
         }
-    }, 
-    EXPERIMENTAL {
-        
-    	@Override
-        public FancyContinentGenerator create(Seed seed, GeneratorContext context) {
-            return new FancyContinentGenerator(seed, context);
-        }
     },
-    INFINITE {
-        
-    	@Override
-        public InfiniteContinentGenerator create(Seed seed, GeneratorContext context) {
-            return new InfiniteContinentGenerator(context);
+    UPLIFT {
+
+        @Override
+        public UpliftContinentGenerator create(Seed seed, GeneratorContext context) {
+            return new UpliftContinentGenerator(seed, context);
         }
     };
 	

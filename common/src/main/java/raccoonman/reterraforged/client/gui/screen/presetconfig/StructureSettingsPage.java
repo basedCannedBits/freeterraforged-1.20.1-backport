@@ -1,15 +1,17 @@
 package raccoonman.reterraforged.client.gui.screen.presetconfig;
 
 import java.util.Optional;
-import java.util.Set;
 
+import raccoonman.reterraforged.client.gui.widget.Slider;
+import raccoonman.reterraforged.client.gui.widget.ValueButton;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.level.biome.Biome;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.levelgen.WorldDimensions;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructureSet;
@@ -18,8 +20,6 @@ import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStruct
 import raccoonman.reterraforged.client.data.RTFTranslationKeys;
 import raccoonman.reterraforged.client.gui.screen.page.LinkedPageScreen.Page;
 import raccoonman.reterraforged.client.gui.screen.presetconfig.PresetListPage.PresetEntry;
-import raccoonman.reterraforged.client.gui.widget.Slider;
-import raccoonman.reterraforged.client.gui.widget.ValueButton;
 import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
 import raccoonman.reterraforged.data.worldgen.preset.settings.StructureSettings;
 import raccoonman.reterraforged.data.worldgen.preset.settings.StructureSettings.StructureSetEntry;
@@ -44,7 +44,7 @@ public class StructureSettingsPage extends PresetEditorPage {
 		
 		WorldCreationContext settings = this.screen.getSettings();
 		RegistryAccess.Frozen registries = settings.worldgenLoadContext();
-		
+
 		registries.lookupOrThrow(Registries.STRUCTURE_SET).listElements().filter((holder) -> {
 			return isOverworldStructureSet(settings.selectedDimensions(), holder);
 		}).forEach((holder) -> {
@@ -55,7 +55,7 @@ public class StructureSettingsPage extends PresetEditorPage {
 				});
 			}
 		});
-		
+
 		structures.entries.forEach((key, entry) -> {
 			class SliderHolder {
 				Slider slider;
@@ -98,16 +98,30 @@ public class StructureSettingsPage extends PresetEditorPage {
 	}
 
 	private static boolean isOverworldStructureSet(WorldDimensions dimensions, Holder.Reference<StructureSet> holder) {
-		Set<Holder<Biome>> overworldBiomes = dimensions.overworld().getBiomeSource().possibleBiomes();
-		for(StructureSelectionEntry structureEntry : holder.value().structures()) {
-			Structure structure = structureEntry.structure().value();
 
-			for(Holder<Biome> biome : structure.biomes()) {
-				if(overworldBiomes.contains(biome)) {
-					return true;
-				}
+		if (holder == null || !holder.isBound()) {
+			return false;
+		}
+
+		if (holder.is(TagKey.create(Registries.STRUCTURE_SET, new ResourceLocation("sets_overworld")))) {
+			return true;
+		}
+
+		for (StructureSelectionEntry entry : holder.value().structures()) {
+			Holder<Structure> structure = entry.structure();
+			if (!structure.isBound()) continue;
+
+			// In 1.21.1, we can check the structure's settings safely.
+			// We look for structures that are NOT explicitly tagged as Nether or End.
+			boolean isNether = structure.is(TagKey.create(Registries.STRUCTURE, new ResourceLocation("is_nether")));
+			boolean isEnd = structure.is(TagKey.create(Registries.STRUCTURE, new ResourceLocation("is_end")));
+
+			// If it's not Nether or End, we treat it as an Overworld candidate (includes modded dims/overworld)
+			if (!isNether && !isEnd) {
+				return true;
 			}
 		}
+
 		return false;
 	}
 }

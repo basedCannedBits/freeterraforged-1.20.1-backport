@@ -2,14 +2,14 @@ package raccoonman.reterraforged.data.worldgen.tags;
 
 import java.util.concurrent.CompletableFuture;
 
+import raccoonman.reterraforged.data.worldgen.compat.terrablender.TBNoiseRouterData;
+import raccoonman.reterraforged.data.worldgen.preset.PresetNoiseRouterData;
+import raccoonman.reterraforged.tags.RTFDensityFunctionTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.world.level.levelgen.DensityFunction;
-import raccoonman.reterraforged.data.worldgen.compat.terrablender.TBNoiseRouterData;
-import raccoonman.reterraforged.data.worldgen.preset.PresetNoiseRouterData;
-import raccoonman.reterraforged.tags.RTFDensityFunctionTags;
 
 public class RTFDensityFunctionTagsProvider extends TagsProvider<DensityFunction> {
 

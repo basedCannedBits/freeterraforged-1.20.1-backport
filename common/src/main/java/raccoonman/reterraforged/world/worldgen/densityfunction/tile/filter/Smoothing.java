@@ -1,9 +1,9 @@
 package raccoonman.reterraforged.world.worldgen.densityfunction.tile.filter;
 
-import raccoonman.reterraforged.data.worldgen.preset.settings.FilterSettings;
 import raccoonman.reterraforged.world.worldgen.cell.Cell;
 import raccoonman.reterraforged.world.worldgen.cell.heightmap.Levels;
 import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
+import raccoonman.reterraforged.data.worldgen.preset.settings.FilterSettings;
 
 public record Smoothing(float smoothingRadius, float smoothingRate, Modifier modifier) implements Filter {
 

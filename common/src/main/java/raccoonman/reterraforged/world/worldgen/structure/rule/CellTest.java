@@ -3,6 +3,11 @@ package raccoonman.reterraforged.world.worldgen.structure.rule;
 import java.util.List;
 import java.util.Set;
 
+import raccoonman.reterraforged.world.worldgen.GeneratorContext;
+import raccoonman.reterraforged.world.worldgen.RTFRandomState;
+import raccoonman.reterraforged.world.worldgen.cell.Cell;
+import raccoonman.reterraforged.world.worldgen.cell.terrain.Terrain;
+import raccoonman.reterraforged.world.worldgen.cell.terrain.TerrainType;
 import org.jetbrains.annotations.Nullable;
 
 import com.google.common.collect.ImmutableSet;
@@ -11,12 +16,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.levelgen.RandomState;
-import raccoonman.reterraforged.world.worldgen.GeneratorContext;
-import raccoonman.reterraforged.world.worldgen.RTFRandomState;
-import raccoonman.reterraforged.world.worldgen.cell.Cell;
 import raccoonman.reterraforged.world.worldgen.cell.heightmap.WorldLookup;
-import raccoonman.reterraforged.world.worldgen.cell.terrain.Terrain;
-import raccoonman.reterraforged.world.worldgen.cell.terrain.TerrainType;
 
 record CellTest(float cutoff, Set<Terrain> terrainTypeBlacklist) implements StructureRule {
 	public static final Codec<CellTest> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -30,9 +30,9 @@ record CellTest(float cutoff, Set<Terrain> terrainTypeBlacklist) implements Stru
 	
 	@Override
 	public boolean test(RandomState randomState, BlockPos pos) {
-		if((Object) randomState instanceof RTFRandomState rtfRandomState) {
+		if((Object) randomState instanceof RTFRandomState ftfRandomState) {
 			@Nullable
-			GeneratorContext generatorContext = rtfRandomState.generatorContext();
+            GeneratorContext generatorContext = ftfRandomState.generatorContext();
 			if(generatorContext != null) {
 				WorldLookup worldLookup = generatorContext.lookup;
 				Cell cell = new Cell();

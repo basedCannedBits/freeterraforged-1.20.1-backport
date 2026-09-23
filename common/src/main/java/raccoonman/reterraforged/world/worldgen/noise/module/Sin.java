@@ -8,7 +8,7 @@ import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 record Sin(float frequency, Noise alpha) implements Noise {
 	public static final Codec<Sin> CODEC = RecordCodecBuilder.create(instance -> instance.group(
 		Codec.FLOAT.fieldOf("frequency").forGetter(Sin::frequency),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("alpha").forGetter(Sin::alpha)
+		HOLDER_HELPER_CODEC.fieldOf("alpha").forGetter(Sin::alpha)
 	).apply(instance, Sin::new));
 
 	@Override

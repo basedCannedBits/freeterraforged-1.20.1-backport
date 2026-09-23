@@ -7,10 +7,10 @@ import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 record Gradient(Noise input, Noise lower, Noise upper, Noise strength) implements Noise {
 	public static final Codec<Gradient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Gradient::input),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("lower").forGetter(Gradient::lower),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("upper").forGetter(Gradient::upper),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("strength").forGetter(Gradient::strength)
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Gradient::input),
+		HOLDER_HELPER_CODEC.fieldOf("lower").forGetter(Gradient::lower),
+		HOLDER_HELPER_CODEC.fieldOf("upper").forGetter(Gradient::upper),
+		HOLDER_HELPER_CODEC.fieldOf("strength").forGetter(Gradient::strength)
 	).apply(instance, Gradient::new));
 	
 	@Override

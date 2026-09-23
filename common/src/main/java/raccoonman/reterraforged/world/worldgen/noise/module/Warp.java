@@ -7,7 +7,7 @@ import raccoonman.reterraforged.world.worldgen.noise.domain.Domain;
 
 record Warp(Noise input, Domain domain) implements Noise {
 	public static final Codec<Warp> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Warp::input),
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Warp::input),
 		Domain.CODEC.fieldOf("domain").forGetter(Warp::domain)
 	).apply(instance, Warp::new));
 	

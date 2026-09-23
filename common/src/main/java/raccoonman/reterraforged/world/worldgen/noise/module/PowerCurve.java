@@ -7,7 +7,7 @@ import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 record PowerCurve(Noise input, float power, float mid, float min, float max) implements Noise {
 	public static final Codec<PowerCurve> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(PowerCurve::input),
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(PowerCurve::input),
 		Codec.FLOAT.fieldOf("power").forGetter(PowerCurve::power)
 	).apply(instance, PowerCurve::new));
 

@@ -1,11 +1,10 @@
 package raccoonman.reterraforged.world.worldgen.heightproviders;
 
 import com.mojang.serialization.Codec;
-
+import raccoonman.reterraforged.platform.RegistryUtil;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProvider;
 import net.minecraft.world.level.levelgen.heightproviders.HeightProviderType;
-import raccoonman.reterraforged.platform.RegistryUtil;
 
 public class RTFHeightProviderTypes {
 	public static final HeightProviderType<LegacyCarverHeight> LEGACY_CARVER = register("legacy_carver", LegacyCarverHeight.CODEC);

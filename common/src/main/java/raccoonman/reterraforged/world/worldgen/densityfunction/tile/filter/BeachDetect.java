@@ -1,10 +1,10 @@
 package raccoonman.reterraforged.world.worldgen.densityfunction.tile.filter;
 
-import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings.ControlPoints;
 import raccoonman.reterraforged.world.worldgen.GeneratorContext;
 import raccoonman.reterraforged.world.worldgen.cell.Cell;
 import raccoonman.reterraforged.world.worldgen.cell.heightmap.Levels;
 import raccoonman.reterraforged.world.worldgen.cell.terrain.TerrainType;
+import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings.ControlPoints;
 import raccoonman.reterraforged.world.worldgen.densityfunction.tile.Size;
 
 public record BeachDetect(Levels levels, ControlPoints transition) implements Filter {

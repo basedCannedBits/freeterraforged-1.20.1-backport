@@ -1,8 +1,8 @@
 package raccoonman.reterraforged.client.data;
 
-import net.minecraft.data.PackOutput;
 import raccoonman.reterraforged.RTFCommon;
 import raccoonman.reterraforged.client.gui.Tooltips;
+import net.minecraft.data.PackOutput;
 
 // TODO add some more languages
 public final class RTFLanguageProvider {
@@ -25,14 +25,15 @@ public final class RTFLanguageProvider {
 			this.add(RTFTranslationKeys.GUI_SELECT_PRESET_MISSING_LEGACY_PRESETS, "Couldn't find any legacy presets");
 			this.add(RTFTranslationKeys.GUI_SELECT_PRESET_TITLE, "Presets & Defaults");
 			this.add(RTFTranslationKeys.GUI_DEFAULT_PRESET_NAME, "Default");
-			this.add(RTFTranslationKeys.GUI_DEFAULT_LEGACY_PRESET_NAME, "TerraForged - Default (Legacy)");
-			this.add(RTFTranslationKeys.GUI_BEAUTIFUL_PRESET_NAME, "TerraForged - Beautiful (Legacy)");
-			this.add(RTFTranslationKeys.GUI_HUGE_BIOMES_PRESET_NAME, "TerraForged - Huge Biomes (Legacy)");
-			this.add(RTFTranslationKeys.GUI_LITE_PRESET_NAME, "TerraForged - Lite (Legacy)");
-			this.add(RTFTranslationKeys.GUI_VANILLAISH_PRESET_NAME, "TerraForged - Vanilla-ish (Legacy)");
+			this.add(RTFTranslationKeys.GUI_DEFAULT_LEGACY_PRESET_NAME, "Legacy - TerraForged Default");
+			this.add(RTFTranslationKeys.GUI_BEAUTIFUL_PRESET_NAME, "Legacy - TerraForged Beautiful");
+			this.add(RTFTranslationKeys.GUI_HUGE_BIOMES_PRESET_NAME, "Legacy - TerraForged Huge Biomes");
+			this.add(RTFTranslationKeys.GUI_LITE_PRESET_NAME, "Legacy - TerraForged Lite");
+			this.add(RTFTranslationKeys.GUI_VANILLAISH_PRESET_NAME, "Legacy - TerraForged Vanilla-ish");
+			this.add(RTFTranslationKeys.GUI_RIVERS_PRESET_NAME, "Modern - Default with 3D Rivers");
 			this.add(RTFTranslationKeys.GUI_WORLD_SETTINGS_TITLE, "World Settings");
 			this.add(RTFTranslationKeys.GUI_SURFACE_SETTINGS_TITLE, "Surface Settings (Experimental)");
-			this.add(RTFTranslationKeys.GUI_CAVE_SETTINGS_TITLE, "Cave Settings (Experimental)");
+			this.add(RTFTranslationKeys.GUI_UNDERGROUND_SETTINGS_TITLE, "Underground Settings");
 			this.add(RTFTranslationKeys.GUI_CLIMATE_SETTINGS_TITLE, "Climate Settings");
 			this.add(RTFTranslationKeys.GUI_TERRAIN_SETTINGS_TITLE, "Terrain Settings");
 			this.add(RTFTranslationKeys.GUI_RIVER_SETTINGS_TITLE, "River Settings");
@@ -42,7 +43,7 @@ public final class RTFLanguageProvider {
 
 			this.add(RTFTranslationKeys.GUI_BUTTON_TRUE, "true");
 			this.add(RTFTranslationKeys.GUI_BUTTON_FALSE, "false");
-			this.add(RTFTranslationKeys.GUI_BUTTON_CREATE, "Create");
+			this.add(RTFTranslationKeys.GUI_BUTTON_CREATE, "Create Default");
 			this.add(RTFTranslationKeys.GUI_BUTTON_COPY, "Copy");
 			this.add(RTFTranslationKeys.GUI_BUTTON_DELETE, "Delete");
 			this.add(RTFTranslationKeys.GUI_BUTTON_OPEN_PRESET_FOLDER, "Open Preset Folder");
@@ -57,6 +58,7 @@ public final class RTFLanguageProvider {
 			this.add(RTFTranslationKeys.GUI_BUTTON_LEGACY_CARVER_DISTRIBUTION, "Legacy Carver Distribution");
 			this.add(RTFTranslationKeys.GUI_BUTTON_CLIMATE_SEED_OFFSET, "Seed Offset");
 			this.add(RTFTranslationKeys.GUI_BUTTON_BIOME_EDGE_TYPE, "Type");
+			this.add(RTFTranslationKeys.GUI_BUTTON_UNDERGROUND_BIOME_BANDING, "Vertical Cave Biome Banding");
 			this.add(RTFTranslationKeys.GUI_BUTTON_TERRAIN_SEED_OFFSET, "Terrain Seed Offset");
 			this.add(RTFTranslationKeys.GUI_BUTTON_FANCY_MOUNTAINS, "Fancy Mountains");
 			this.add(RTFTranslationKeys.GUI_BUTTON_LEGACY_MOUNTAIN_SCALING, "Legacy Mountain Scaling");
@@ -73,7 +75,7 @@ public final class RTFLanguageProvider {
 			this.add(RTFTranslationKeys.GUI_BUTTON_VANILLA_SPRINGS, "Vanilla Springs");
 			this.add(RTFTranslationKeys.GUI_BUTTON_VANILLA_LAVA_LAKES, "Vanilla Lava Lakes");
 			this.add(RTFTranslationKeys.GUI_BUTTON_VANILLA_LAVA_SPRINGS, "Vanilla Lava Springs");
-
+			this.add(RTFTranslationKeys.GUI_BUTTON_RENDER_MODE, "Preview");
 			this.add(RTFTranslationKeys.GUI_SLIDER_ZOOM, "Zoom");
 			this.add(RTFTranslationKeys.GUI_SLIDER_CONTINENT_SCALE, "Continent Scale");
 			this.add(RTFTranslationKeys.GUI_SLIDER_CONTINENT_JITTER, "Continent Jitter");
@@ -91,6 +93,7 @@ public final class RTFLanguageProvider {
 			this.add(RTFTranslationKeys.GUI_SLIDER_INLAND, "Inland");
 			this.add(RTFTranslationKeys.GUI_SLIDER_WORLD_HEIGHT, "World Height");
 			this.add(RTFTranslationKeys.GUI_SLIDER_WORLD_DEPTH, "World Depth");
+			this.add(RTFTranslationKeys.GUI_SLIDER_OCEAN_DEPTH, "Ocean Depth");
 			this.add(RTFTranslationKeys.GUI_SLIDER_SEA_LEVEL, "Sea Level");
 			this.add(RTFTranslationKeys.GUI_SLIDER_LAVA_LEVEL, "Lava Level");
 			this.add(RTFTranslationKeys.GUI_SLIDER_ROCK_VARIANCE, "Rock Variance");
@@ -118,7 +121,11 @@ public final class RTFLanguageProvider {
 			this.add(RTFTranslationKeys.GUI_SLIDER_MOISTURE_MIN, "Min");
 			this.add(RTFTranslationKeys.GUI_SLIDER_MOISTURE_MAX, "Max");
 			this.add(RTFTranslationKeys.GUI_SLIDER_MOISTURE_BIAS, "Bias");
-			this.add(RTFTranslationKeys.GUI_SLIDER_BIOME_SIZE, "Biome Size");
+			this.add(RTFTranslationKeys.GUI_SLIDER_BIOME_SIZE, "Surface Biome Size");
+			this.add(RTFTranslationKeys.GUI_SLIDER_UNDERGROUND_BIOME_SIZE, "Underground Biome Horizontal Size");
+			this.add(RTFTranslationKeys.GUI_SLIDER_UNDERGROUND_BIOME_VERTICAL_SIZE, "Underground Biome Vertical Size");
+			this.add(RTFTranslationKeys.GUI_SLIDER_UNDERGROUND_BIOME_COVERAGE, "Cave Biome Coverage");
+			this.add(RTFTranslationKeys.GUI_SLIDER_UNDERGROUND_BIOME_CLIMATE_INFLUENCE, "Cave Climate Influence");
 			this.add(RTFTranslationKeys.GUI_SLIDER_MACRO_NOISE_SIZE, "Macro Noise Size");
 			this.add(RTFTranslationKeys.GUI_SLIDER_BIOME_WARP_SCALE, "Biome Warp Size");
 			this.add(RTFTranslationKeys.GUI_SLIDER_BIOME_WARP_STRENGTH, "Biome Warp Strength");
@@ -171,15 +178,17 @@ public final class RTFLanguageProvider {
 			this.add(RTFTranslationKeys.GUI_LABEL_PREVIEW_AREA, "Area: ");
 			this.add(RTFTranslationKeys.GUI_LABEL_PREVIEW_TERRAIN, "Terrain: ");
 			this.add(RTFTranslationKeys.GUI_LABEL_PREVIEW_BIOME, "Biome: ");
+			this.add(RTFTranslationKeys.GUI_LABEL_PREVIEW_SPAWN, "Spawn: ");
 			this.add(RTFTranslationKeys.GUI_LABEL_CONTINENT, "Continent");
 			this.add(RTFTranslationKeys.GUI_LABEL_CONTROL_POINTS, "Control Points");
 			this.add(RTFTranslationKeys.GUI_LABEL_PROPERTIES, "Properties");
-			this.add(RTFTranslationKeys.GUI_LABEL_SURFACE_EROSION, "Erosion");
+			this.add(RTFTranslationKeys.GUI_LABEL_TRANSITIONS, "Erosion");
 			this.add(RTFTranslationKeys.GUI_LABEL_NOISE_CAVES, "Noise Caves");
 			this.add(RTFTranslationKeys.GUI_LABEL_CARVERS, "Carvers");
 			this.add(RTFTranslationKeys.GUI_LABEL_TEMPERATURE, "Temperature");
 			this.add(RTFTranslationKeys.GUI_LABEL_MOISTURE, "Moisture");
 			this.add(RTFTranslationKeys.GUI_LABEL_BIOME_SHAPE, "Biome Shape");
+			this.add(RTFTranslationKeys.GUI_LABEL_UNDERGROUND_BIOMES, "Underground Biomes");
 			this.add(RTFTranslationKeys.GUI_LABEL_BIOME_EDGE_SHAPE, "Biome Edge Shape");
 			this.add(RTFTranslationKeys.GUI_LABEL_GENERAL, "General");
 			this.add(RTFTranslationKeys.GUI_LABEL_STEPPE, "Steppe");
@@ -210,6 +219,7 @@ public final class RTFLanguageProvider {
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_LEGACY_CARVER_DISTRIBUTION), "Set whether carvers use 1.16 distribution");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_CLIMATE_SEED_OFFSET), "A seed offset used to randomise climate distribution");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_BIOME_EDGE_TYPE), "The noise type");
+			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_UNDERGROUND_BIOME_BANDING), "Allows different cave biomes to appear above and below each other. Turn this off to keep cave biomes at their normal depths. In very deep worlds, the Deep Dark may then cover much of the lower world. Surface biomes can still appear between cave-biome areas when Cave Biome Coverage is below 100%.");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_TERRAIN_SEED_OFFSET), "A seed offset used to randomise terrain distribution");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_FANCY_MOUNTAINS), "Carries out extra processing on mountains to make them look even nicer. Can be disabled to improve performance slightly.");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_LEGACY_MOUNTAIN_SCALING), "Changes mountain scaling to be compatible with legacy TerraForged");
@@ -226,6 +236,7 @@ public final class RTFLanguageProvider {
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_VANILLA_SPRINGS), "Allow vanilla springs (water source blocks) to generate");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_VANILLA_LAVA_LAKES), "Allow vanilla lava-lakes to generate");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_VANILLA_LAVA_SPRINGS), "Allow vanilla springs (lava source blocks) to generate");
+			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_BUTTON_RENDER_MODE), "Cycles the render preview mode.");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_ZOOM), "Controls the zoom level of the preview map");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_CONTINENT_SCALE), "Controls the size of continents. You may also need to adjust the transition points to ensure beaches etc still form.");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_CONTINENT_JITTER), "Controls how much continent centers are offset from the underlying noise grid.");
@@ -243,6 +254,7 @@ public final class RTFLanguageProvider {
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_INLAND), "Controls the overall transition from ocean to inland terrain.");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_WORLD_HEIGHT), "Controls the world height");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_WORLD_DEPTH), "Controls the minimum y level");
+			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_OCEAN_DEPTH), "Controls how deep the ocean floor extends below sea level.");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_SEA_LEVEL), "Controls the sea level");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_LAVA_LEVEL), "Controls the lava level.");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_ROCK_VARIANCE), "Controls the density of the rock gradient");
@@ -270,7 +282,11 @@ public final class RTFLanguageProvider {
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_MOISTURE_MIN), "The lower limit of the range");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_MOISTURE_MAX), "The upper limit of the range");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_MOISTURE_BIAS), "The bias towards either end of the range");
-			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_BIOME_SIZE), "Controls the size of individual biomes");
+			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_BIOME_SIZE), "Controls the horizontal scale of surface biome climate regions.");
+			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_UNDERGROUND_BIOME_SIZE), "Controls how wide underground biome regions are. This includes both cave biomes and ordinary surface biomes below the surface.");
+			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_UNDERGROUND_BIOME_VERTICAL_SIZE), "Controls how tall cave-biome and surface-biome areas are underground. With Vertical Cave Biome Banding off, it still controls the height of those areas but does not move cave biomes away from their normal depths. You can set it as high as 512 blocks, or the world's full height when the world is shorter.");
+			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_UNDERGROUND_BIOME_COVERAGE), "Controls how often cave biomes replace ordinary surface biomes underground. At 0%, no cave biomes appear. At 100%, cave biomes fill every underground area where they can generate. This does not change how many physical caves generate.");
+			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_UNDERGROUND_BIOME_CLIMATE_INFLUENCE), "Controls how strongly climate affects which cave biome is chosen. At 0%, climate has no effect. At 100%, the closest climate match is always chosen. This does not affect ordinary surface biomes underground.");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_MACRO_NOISE_SIZE), "Macro noise is used to group large areas of biomes into a single type (such as deserts)");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_BIOME_WARP_SCALE), "Controls the scale of shape distortion for biomes");
 			this.add(Tooltips.translationKey(RTFTranslationKeys.GUI_SLIDER_BIOME_WARP_STRENGTH), "Controls the strength of shape distortion for biomes");

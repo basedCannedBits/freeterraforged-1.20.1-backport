@@ -7,7 +7,7 @@ import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 record Invert(Noise input) implements Noise {
 	public static final Codec<Invert> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Invert::input)
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Invert::input)
 	).apply(instance, Invert::new));
 	
 	@Override

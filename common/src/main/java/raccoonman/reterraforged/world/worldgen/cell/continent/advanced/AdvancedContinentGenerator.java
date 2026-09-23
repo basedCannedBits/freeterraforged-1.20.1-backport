@@ -1,20 +1,19 @@
 package raccoonman.reterraforged.world.worldgen.cell.continent.advanced;
 
+import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
+import raccoonman.reterraforged.world.worldgen.noise.domain.Domain;
+import raccoonman.reterraforged.world.worldgen.noise.domain.Domains;
+import raccoonman.reterraforged.world.worldgen.noise.module.Line;
+import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
+import raccoonman.reterraforged.world.worldgen.util.PosUtil;
+import raccoonman.reterraforged.world.worldgen.util.Seed;
 import raccoonman.reterraforged.concurrent.Resource;
 import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings;
 import raccoonman.reterraforged.world.worldgen.GeneratorContext;
 import raccoonman.reterraforged.world.worldgen.cell.Cell;
 import raccoonman.reterraforged.world.worldgen.cell.continent.SimpleContinent;
 import raccoonman.reterraforged.world.worldgen.cell.rivermap.Rivermap;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil.Vec2f;
-import raccoonman.reterraforged.world.worldgen.noise.domain.Domain;
-import raccoonman.reterraforged.world.worldgen.noise.domain.Domains;
-import raccoonman.reterraforged.world.worldgen.noise.module.Line;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
-import raccoonman.reterraforged.world.worldgen.util.PosUtil;
-import raccoonman.reterraforged.world.worldgen.util.Seed;
 
 public class AdvancedContinentGenerator extends AbstractContinent implements SimpleContinent {
     protected static float CENTER_CORRECTION = 0.35F;
@@ -64,7 +63,7 @@ public class AdvancedContinentGenerator extends AbstractContinent implements Sim
         float nearest = Float.MAX_VALUE;
         for (int cy = yi - 1; cy <= yi + 1; ++cy) {
             for (int cx = xi - 1; cx <= xi + 1; ++cx) {
-                Vec2f vec = NoiseUtil.cell(this.seed, cx, cy);
+                NoiseUtil.Vec2f vec = NoiseUtil.cell(this.seed, cx, cy);
                 float px = cx + vec.x() * this.jitter;
                 float py = cy + vec.y() * this.jitter;
                 float dist2 = Line.distSq(x, y, px, py);
@@ -83,7 +82,7 @@ public class AdvancedContinentGenerator extends AbstractContinent implements Sim
         for (int cy2 = cellY - 1; cy2 <= cellY + 1; ++cy2) {
             for (int cx2 = cellX - 1; cx2 <= cellX + 1; ++cx2) {
                 if (cx2 != cellX || cy2 != cellY) {
-                    Vec2f vec2 = NoiseUtil.cell(this.seed, cx2, cy2);
+                    NoiseUtil.Vec2f vec2 = NoiseUtil.cell(this.seed, cx2, cy2);
                     float px2 = cx2 + vec2.x() * this.jitter;
                     float py2 = cy2 + vec2.y() * this.jitter;
                     float dist3 = getDistance(x, y, cellPointX, cellPointY, px2, py2);

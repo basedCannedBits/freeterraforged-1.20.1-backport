@@ -1,20 +1,20 @@
 package raccoonman.reterraforged.world.worldgen.cell.continent.simple;
 
-import raccoonman.reterraforged.world.worldgen.GeneratorContext;
-import raccoonman.reterraforged.world.worldgen.cell.Cell;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil.Vec2i;
+import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 import raccoonman.reterraforged.world.worldgen.util.PosUtil;
 import raccoonman.reterraforged.world.worldgen.util.Seed;
+import raccoonman.reterraforged.world.worldgen.GeneratorContext;
+import raccoonman.reterraforged.world.worldgen.cell.Cell;
 
 public class SingleContinentGenerator extends ContinentGenerator {
-    private Vec2i center;
+    private NoiseUtil.Vec2i center;
     
     public SingleContinentGenerator(Seed seed, GeneratorContext context) {
         super(seed, context);
         long center = this.getNearestCenter(0.0F, 0.0F);
         int cx = PosUtil.unpackLeft(center);
         int cz = PosUtil.unpackRight(center);
-        this.center = new Vec2i(cx, cz);
+        this.center = new NoiseUtil.Vec2i(cx, cz);
     }
     
     @Override

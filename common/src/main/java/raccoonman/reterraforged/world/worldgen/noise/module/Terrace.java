@@ -7,10 +7,10 @@ import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 public record Terrace(Noise input, Noise ramp, Noise cliff, Noise rampHeight, float blendRange, Step[] steps) implements Noise {
 	public static final Codec<Terrace> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Terrace::input),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("ramp").forGetter(Terrace::ramp),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("cliff").forGetter(Terrace::cliff),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("ramp_height").forGetter(Terrace::rampHeight),
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Terrace::input),
+		HOLDER_HELPER_CODEC.fieldOf("ramp").forGetter(Terrace::ramp),
+		HOLDER_HELPER_CODEC.fieldOf("cliff").forGetter(Terrace::cliff),
+		HOLDER_HELPER_CODEC.fieldOf("ramp_height").forGetter(Terrace::rampHeight),
 		Codec.FLOAT.fieldOf("blend_range").forGetter(Terrace::blendRange),
 		Codec.INT.fieldOf("steps").forGetter((terrace) -> terrace.steps().length)
 	).apply(instance, Terrace::new));

@@ -5,9 +5,9 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 record Frequency(Noise input, Noise xFreq, Noise zFreq) implements Noise {
 	public static final Codec<Frequency> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Frequency::input),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("x_freq").forGetter(Frequency::xFreq),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("z_freq").forGetter(Frequency::zFreq)
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Frequency::input),
+		HOLDER_HELPER_CODEC.fieldOf("x_freq").forGetter(Frequency::xFreq),
+		HOLDER_HELPER_CODEC.fieldOf("z_freq").forGetter(Frequency::zFreq)
 	).apply(instance, Frequency::new));
 	
 	@Override

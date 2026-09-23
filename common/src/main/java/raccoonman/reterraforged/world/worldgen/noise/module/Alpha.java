@@ -5,8 +5,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 record Alpha(Noise input, Noise alpha) implements Noise {
 	public static final Codec<Alpha> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Alpha::input),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("alpha").forGetter(Alpha::alpha)
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Alpha::input),
+		HOLDER_HELPER_CODEC.fieldOf("alpha").forGetter(Alpha::alpha)
 	).apply(instance, Alpha::new));
 	
 	@Override

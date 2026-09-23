@@ -1,7 +1,6 @@
 package raccoonman.reterraforged.world.worldgen.feature.template.placement;
 
 import com.mojang.serialization.Codec;
-
 import raccoonman.reterraforged.platform.RegistryUtil;
 import raccoonman.reterraforged.registries.RTFBuiltInRegistries;
 

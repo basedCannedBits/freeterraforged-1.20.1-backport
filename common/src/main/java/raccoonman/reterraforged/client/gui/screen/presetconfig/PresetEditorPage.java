@@ -1,331 +1,318 @@
 package raccoonman.reterraforged.client.gui.screen.presetconfig;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.Optional;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
+import raccoonman.reterraforged.client.gui.widget.Slider;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.MouseHandler;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
-import net.minecraft.client.gui.screens.worldselection.WorldCreationContext;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.core.HolderGetter;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import raccoonman.reterraforged.RTFCommon;
+import net.minecraft.world.level.levelgen.WorldOptions;
 import raccoonman.reterraforged.client.data.RTFTranslationKeys;
 import raccoonman.reterraforged.client.gui.screen.page.BisectedPage;
 import raccoonman.reterraforged.client.gui.screen.presetconfig.PresetListPage.PresetEntry;
-import raccoonman.reterraforged.client.gui.widget.Slider;
-import raccoonman.reterraforged.client.gui.widget.ValueButton;
-import raccoonman.reterraforged.concurrent.cache.CacheManager;
-import raccoonman.reterraforged.config.PerformanceConfig;
-import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
-import raccoonman.reterraforged.data.worldgen.preset.settings.SpawnType;
-import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings;
-import raccoonman.reterraforged.registries.RTFRegistries;
-import raccoonman.reterraforged.world.worldgen.GeneratorContext;
-import raccoonman.reterraforged.world.worldgen.cell.Cell;
-import raccoonman.reterraforged.world.worldgen.cell.heightmap.Levels;
-import raccoonman.reterraforged.world.worldgen.densityfunction.tile.Tile;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
-import raccoonman.reterraforged.world.worldgen.util.PosUtil;
 
 public abstract class PresetEditorPage extends BisectedPage<PresetConfigScreen, AbstractWidget, AbstractWidget> {
-	private Slider zoom;
-	private CycleButton<RenderMode> renderMode;
-	private ValueButton<Integer> seed;
-	private Preview preview;
+	// Independent control components
+	Slider zoom2D;
+	Slider zoom3D;
+	CycleButton<RenderMode> renderMode2D;
+	CycleButton<RenderMode> renderMode3D;
+	private int previewNavigationX;
+	private int previewNavigationZ;
+	private boolean previewNavigated;
 	protected PresetEntry preset;
-	
+
+	// Static persistent state containers
+	public static int minZoom = 1;
+	public static int maxZoom = 100;
+	public static double staticZoom2D = 68.0D;
+	public static double staticZoom3D = 95.0D;
+	public static RenderMode staticMode2D = RenderMode.BIOME;
+	public static RenderMode staticMode3D = RenderMode.HYPSOMETRIC;
+
+	private EditBox seedEdit;
+	private Button seedRandomize;
+	private Preview3D preview3D;
+	private Preview2D preview2D;
+
 	public PresetEditorPage(PresetConfigScreen screen, PresetEntry preset) {
 		super(screen);
-		
+
 		this.preset = preset;
 	}
-	
+
 	protected void regenerate() {
-		this.preview.regenerate();
+
+		if (this.preview3D != null) {
+			this.preview3D.regenerate();
+		}
+
+		if (this.preview2D != null) {
+			this.preview2D.regenerate();
+		}
 	}
-	
+
+	PresetConfigScreen getScreen() {
+		return this.screen;
+	}
+
+	PreviewComputationCache previewCache() {
+		return this.screen.previewCache();
+	}
+
+	int previewNavigationX() {
+		return this.previewNavigationX;
+	}
+
+	int previewNavigationZ() {
+		return this.previewNavigationZ;
+	}
+
+	boolean previewNavigated() {
+		return this.previewNavigated;
+	}
+
+	void setPreviewNavigation(int x, int z) {
+		this.previewNavigationX = x;
+		this.previewNavigationZ = z;
+		this.previewNavigated = true;
+	}
+
+	void resetPreviewNavigation() {
+		this.previewNavigated = false;
+	}
+
 	@Override
 	public void init() {
 		super.init();
+		this.cleanupWidgets();
 
-		if(this.preview != null) {
-			try {
-				this.preview.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+		int startX = this.left.getX();
+		int totalWidth = (this.right.getX() + this.right.getWidth()) - startX;
+		int columnWidth = totalWidth / 3;
+
+		// COLUMN 2 (CENTER): Move the settings list here so it keeps its background box
+		this.left.setX(startX + columnWidth);
+		this.left.setWidth(columnWidth);
+
+		// BACKGROUND REMOVAL: Push the right container off-screen so its background box isn't rendered
+		this.right.setX(-9999);
+		this.right.setWidth(0);
+		this.right.setHeight(0);
+
+		this.createControls();
+
+		// 2. Dynamically fit the 3D preview inside the newly resized right column
+		if (this.preview3D != null) {
+			int padding = 10;
+
+			// Calculate a responsive width based on the column's new size
+			int dynamicWidth = this.right.getWidth() - (padding * 2);
+			int dynamicHeight = dynamicWidth; // Keep it a clean, un-stretched square
+
+			// Push the fresh coordinates and dimensions to the widget
+			this.preview3D.updateBounds(
+					this.right.getX() + padding,
+					this.right.getY() + padding,
+					dynamicWidth,
+					dynamicHeight
+			);
 		}
 
-		this.zoom = PresetWidgets.createIntSlider(Optional.ofNullable(this.zoom).map(Slider::getLerpedValue).orElse(68.0D).intValue(), 1, 100, RTFTranslationKeys.GUI_SLIDER_ZOOM, (slider, value) -> {
-			this.regenerate();
+		int elementWidth = this.left.getRowWidth();
+		int forceOffset = 2;
+
+		int yButtonRow1 = this.left.getY();
+
+		// 2D Viewport setup (No background container)
+		this.initLeftPreviewColumn(0,4, forceOffset, elementWidth, yButtonRow1 + 5);
+
+		// 3D Viewport setup (No background container)
+		this.initRightPreviewColumn(startX + columnWidth * 2 + 24, 4, forceOffset, elementWidth, yButtonRow1 - 24 + 5);
+
+		// fill out the remaining gap
+		this.left.setX(startX + columnWidth - 20);
+		this.left.setWidth(columnWidth + 44);
+	}
+
+	private void createControls() {
+		// Zoom2D (High Precision)
+		double initZoom2D = Optional.ofNullable(this.zoom2D).map(Slider::getLerpedValue).orElse(staticZoom2D);
+		this.zoom2D = PresetWidgets.createIntSlider((int) Math.round(initZoom2D), minZoom, maxZoom, RTFTranslationKeys.GUI_SLIDER_ZOOM, (slider, value) -> {
+			staticZoom2D = ((Slider) slider).getLerpedValue();
+			if (this.preview2D != null) this.preview2D.regenerate();
 			return value;
 		});
-		this.renderMode = PresetWidgets.createCycle(ImmutableList.copyOf(RenderMode.values()), this.renderMode != null ? this.renderMode.getValue() : RenderMode.BIOME_TYPE, Optional.empty(), (button, value) -> {
-			this.regenerate();
-		}, RenderMode::name);
-		this.seed = PresetWidgets.createRandomButton(RTFTranslationKeys.GUI_BUTTON_SEED, (int) this.screen.getSettings().options().seed(), (i) -> {
-			this.screen.setSeed(i);
+		this.zoom2D.setValue((initZoom2D - 1.0D) / (100.0D - 1.0D));
+
+		// Zoom3D (High Precision)
+		double initZoom3D = Optional.ofNullable(this.zoom3D).map(Slider::getLerpedValue).orElse(staticZoom3D);
+		this.zoom3D = PresetWidgets.createIntSlider((int) Math.round(initZoom3D), minZoom, maxZoom, RTFTranslationKeys.GUI_SLIDER_ZOOM, (slider, value) -> {
+			staticZoom3D = ((Slider) slider).getLerpedValue();
+			if (this.preview3D != null) this.preview3D.regenerate();
+			return value;
+		});
+		this.zoom3D.setValue((initZoom3D - 1.0D) / (100.0D - 1.0D));
+
+		this.renderMode2D = PresetWidgets.createCycle(ImmutableList.copyOf(RenderMode.values()), this.renderMode2D != null ? this.renderMode2D.getValue() : staticMode2D, RTFTranslationKeys.GUI_BUTTON_RENDER_MODE, (button, value) -> {
+			staticMode2D = value;
+			if (this.preview2D != null) this.preview2D.refreshRenderMode(value);
+		}, RenderMode::displayName);
+
+		this.renderMode3D = PresetWidgets.createCycle(ImmutableList.copyOf(RenderMode.values()), this.renderMode3D != null ? this.renderMode3D.getValue() : staticMode3D, RTFTranslationKeys.GUI_BUTTON_RENDER_MODE, (button, value) -> {
+			staticMode3D = value;
+			if (this.preview3D != null) this.preview3D.refreshRenderMode(value);
+		}, RenderMode::displayName);
+
+		// Seed Text Input
+		String currentSeed = this.getInitialSeedText();
+		this.seedEdit = new EditBox(Minecraft.getInstance().font, 0, 0, 0, 20, Component.translatable(RTFTranslationKeys.GUI_BUTTON_SEED)) {
+			@Override
+			public boolean mouseClicked(double mouseX, double mouseY, int button) {
+				boolean wasFocused = this.isFocused();
+				boolean handled = super.mouseClicked(mouseX, mouseY, button);
+				// Highlight text only when clicking to gain focus
+				if (handled && !wasFocused) {
+					this.setCursorPosition(this.getValue().length());
+					this.setHighlightPos(0);
+				}
+				return handled;
+			}
+		};
+		this.seedEdit.setTextColor(0xFFFFFF);
+		this.seedEdit.setHint(Component.translatable(RTFTranslationKeys.GUI_BUTTON_SEED));
+		this.seedEdit.setValue(currentSeed);
+		this.seedEdit.setResponder((text) -> {
+			this.screen.setSeed(text);
 			this.regenerate();
 		});
 
-		this.preview = new Preview();
-		this.preview.regenerate();
-
-		this.right.addWidget(this.zoom);
-		this.right.addWidget(this.renderMode);
-		this.right.addWidget(this.seed);
-		this.right.addWidget(this.preview);
+		// Randomize Seed Button
+		this.seedRandomize = Button.builder(Component.literal("🎲"), (button) -> {
+					String newSeed = String.valueOf(WorldOptions.randomSeed());
+					this.seedEdit.setValue(newSeed);
+					this.seedEdit.moveCursorToStart(false);
+				})
+				.tooltip(Tooltip.create(Component.translatable(RTFTranslationKeys.GUI_BUTTON_RANDOMIZE_SEED)))
+				.bounds(0, 0, 20, 20)
+				.build();
 	}
-	
-	@Override
-	public void onClose() {
-		super.onClose();
-	
-		try {
-			this.preset.save();
-			this.preview.close();
-		} catch (Exception e) {
-			e.printStackTrace();
+
+	private String getInitialSeedText() {
+		return this.screen.getSeed();
+	}
+
+	private void initLeftPreviewColumn(int columnX, int padding, int offset, int width, int yBase) {
+		int x = columnX + padding + offset;
+
+		// Viewport, registered first so that dropdowns display over the top
+		this.preview2D = new Preview2D(this, x, yBase + 48, width, width);
+		this.preview2D.regenerate();
+		this.screen.addWidgetToScreen(this.preview2D);
+
+		// Controls
+		this.zoom2D.setX(x);
+		this.zoom2D.setY(yBase);
+		this.zoom2D.setWidth(width);
+		this.zoom2D.setHeight(20);
+		this.screen.addWidgetToScreen(this.zoom2D);
+
+		this.renderMode2D.setX(x);
+		this.renderMode2D.setY(yBase + 24);
+		this.renderMode2D.setWidth(width);
+		this.renderMode2D.setHeight(20);
+		this.screen.addWidgetToScreen(this.renderMode2D);
+	}
+
+	private void initRightPreviewColumn(int columnX, int padding, int offset, int width, int yBase) {
+		int x = columnX + padding + offset;
+
+		// Viewport, registered first so that dropdowns display over the top
+		int y3D = yBase + 48 + 24;
+		this.preview3D = new Preview3D(this, x, y3D, width, width);
+		this.preview3D.regenerate();
+		this.screen.addWidgetToScreen(this.preview3D);
+
+		// Seed Input Controls: Edit box on the left, randomize button on the right
+		int buttonWidth = 20;
+		int gap = 4;
+		int editWidth = width - buttonWidth - gap;
+
+		this.seedEdit.setX(x);
+		this.seedEdit.setY(yBase);
+		this.seedEdit.setWidth(editWidth);
+		this.seedEdit.setHeight(20);
+
+		// Resets cursor & clears selection highlight without selecting text
+		this.seedEdit.moveCursorToStart(false);
+		this.screen.addWidgetToScreen(this.seedEdit);
+
+		this.seedRandomize.setX(x + editWidth + gap);
+		this.seedRandomize.setY(yBase);
+		this.seedRandomize.setWidth(buttonWidth);
+		this.seedRandomize.setHeight(20);
+		this.screen.addWidgetToScreen(this.seedRandomize);
+
+		// Controls
+		this.zoom3D.setX(x);
+		this.zoom3D.setY(yBase + 24);
+		this.zoom3D.setWidth(width);
+		this.zoom3D.setHeight(20);
+		this.screen.addWidgetToScreen(this.zoom3D);
+
+		this.renderMode3D.setX(x);
+		this.renderMode3D.setY(yBase + 48);
+		this.renderMode3D.setWidth(width);
+		this.renderMode3D.setHeight(20);
+		this.screen.addWidgetToScreen(this.renderMode3D);
+	}
+
+	private void cleanupWidgets() {
+		if (this.zoom2D != null) this.screen.removeWidgetFromScreen(this.zoom2D);
+		if (this.zoom3D != null) this.screen.removeWidgetFromScreen(this.zoom3D);
+		if (this.renderMode2D != null) this.screen.removeWidgetFromScreen(this.renderMode2D);
+		if (this.renderMode3D != null) this.screen.removeWidgetFromScreen(this.renderMode3D);
+		if (this.seedEdit != null) this.screen.removeWidgetFromScreen(this.seedEdit);
+		if (this.seedRandomize != null) this.screen.removeWidgetFromScreen(this.seedRandomize);
+
+		if (this.preview3D != null) {
+			this.screen.removeWidgetFromScreen(this.preview3D);
+			try { this.preview3D.close(); } catch (Exception e) { e.printStackTrace(); }
+			this.preview3D = null;
+		}
+		if (this.preview2D != null) {
+			this.screen.removeWidgetFromScreen(this.preview2D);
+			try { this.preview2D.close(); } catch (Exception e) { e.printStackTrace(); }
+			this.preview2D = null;
 		}
 	}
-	
+
 	@Override
-	public void onDone() {
-		super.onDone();
-		
+	public void onCancel() {
+		super.onCancel();
+		try {
+			if (this.preview3D != null) this.preview3D.close();
+			if (this.preview2D != null) this.preview2D.close();
+		} catch (Exception e) { e.printStackTrace(); }
+		this.preview3D = null;
+		this.preview2D = null;
+	}
+
+	@Override
+	public void onSave() {
+		super.onSave();
 		try {
 			this.screen.applyPreset(this.preset);
+			this.preset.save();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public class Preview extends Button {
-	    private static final int FACTOR = 4;
-	    public static final int SIZE = (1 << 4) << FACTOR;
-	    private static final float[] LEGEND_SCALES = { 1, 0.9F, 0.75F, 0.6F };
-	    private DynamicTexture texture = new DynamicTexture(new NativeImage(SIZE, SIZE, false));
-	    private ResourceLocation textureId = Minecraft.getInstance().getTextureManager().register(RTFCommon.MOD_ID + "-preview-framebuffer", this.texture); 
-	    private Tile tile;
-	    private int centerX, centerZ;
-	    
-	    private String hoveredCoords = "";
-	    //TODO maybe make this a map or something instead?
-	    private String[] legendValues = {"", "", ""};
-	    private Component[] legendLabels = { Component.translatable(RTFTranslationKeys.GUI_LABEL_PREVIEW_AREA), Component.translatable(RTFTranslationKeys.GUI_LABEL_PREVIEW_TERRAIN), Component.translatable(RTFTranslationKeys.GUI_LABEL_PREVIEW_BIOME) };
-	    
-	    private int offsetX, offsetZ;
-
-	    public Preview() {
-	        super(-1, -1, -1, -1, CommonComponents.EMPTY, (b) -> {
-		    	System.out.println("clicked");
-	        	Minecraft mc = Minecraft.getInstance();
-	        	MouseHandler mouse = mc.mouseHandler;
-	        	if(b instanceof Preview self) {
-			        if (self.updateLegend((int) mouse.xpos(), (int) mouse.ypos()) && !self.hoveredCoords.isEmpty()) {
-			            self.playDownSound(Minecraft.getInstance().getSoundManager());
-			            PresetEditorPage.this.screen.minecraft.keyboardHandler.setClipboard(self.hoveredCoords);
-			        }
-	        	}
-	        }, DEFAULT_NARRATION);
-	    }
-
-	    public void regenerate() {
-			WorldCreationContext settings = PresetEditorPage.this.screen.getSettings();
-	        RegistryAccess.Frozen registries = settings.worldgenLoadContext();
-	        HolderLookup.Provider provider = PresetEditorPage.this.preset.getPreset().buildPatch(registries);
-	        HolderGetter<Preset> presets = provider.lookupOrThrow(RTFRegistries.PRESET);
-	        HolderGetter<Noise> noises = provider.lookupOrThrow(RTFRegistries.NOISE);
-	        Preset preset = presets.getOrThrow(Preset.KEY).value();
-	        WorldSettings world = preset.world();
-	        WorldSettings.Properties properties = world.properties;
-	        
-	        try {
-				CacheManager.clear();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			PerformanceConfig config = PerformanceConfig.read(PerformanceConfig.DEFAULT_FILE_PATH)
-				.resultOrPartial(RTFCommon.LOGGER::error)
-				.orElseGet(PerformanceConfig::makeDefault);
-	        GeneratorContext generatorContext = GeneratorContext.makeUncached(preset, noises, (int) settings.options().seed(), FACTOR, 0, config.batchCount());
-	        
-	        this.centerX = 0;
-	        this.centerZ = 0;
-	        
-	        if(preset.world().properties.spawnType == SpawnType.CONTINENT_CENTER) {
-	        	long nearestContinentCenter = generatorContext.lookup.getHeightmap().continent().getNearestCenter(this.offsetX, this.offsetZ);
-	        	this.centerX = PosUtil.unpackLeft(nearestContinentCenter);
-	        	this.centerZ = PosUtil.unpackRight(nearestContinentCenter);
-	        } else {
-	        	this.centerX = 0;
-	        	this.centerZ = 0;
-	        }
-
-	        this.tile = generatorContext.generator.generateZoomed(this.centerX, this.centerZ, this.getZoom(), false).join();
-	        RenderMode renderMode = PresetEditorPage.this.renderMode.getValue();
-	        Levels levels = new Levels(properties.terrainScaler(), properties.seaLevel);
-
-	        int stroke = 2;
-	        int width = this.tile.getBlockSize().size();
-
-	        NativeImage pixels = this.texture.getPixels();
-	        this.tile.iterate((cell, x, z) -> {
-	            if (x < stroke || z < stroke || x >= width - stroke || z >= width - stroke) {
-	                pixels.setPixelRGBA(x, z, Color.BLACK.getRGB());
-	            } else {
-	                pixels.setPixelRGBA(x, z, renderMode.getColor(cell, levels));
-	            }
-	        });
-	        this.texture.upload();
-	    }
-	    
-	    public void close() throws Exception {
-	    	this.texture.close();
-	    	try {
-				CacheManager.clear();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-	    }
-
-	    @Override
-	    public void render(GuiGraphics guiGraphics, int mx, int my, float partialTicks) {
-	    	int x = this.getX();
-	    	int y = this.getY();
-	    	
-	    	this.height = this.getWidth();
-	        RenderSystem.enableBlend();
-	        RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-	        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-	    	guiGraphics.blit(this.textureId, x, y, 0, 0, this.width, this.height, this.width, this.height);
-
-	    	this.updateLegend(mx, my);
-
-	    	this.renderLegend(guiGraphics, mx, my, this.legendLabels, this.legendValues, x, y + this.width, 10, 0xFFFFFF);
-	    }
-
-	    private boolean updateLegend(int mx, int my) {
-	        if (this.tile != null) {
-	            int left = this.getX();
-	            int top = this.getY();
-	            float size = this.width;
-	
-	            int zoom = this.getZoom();
-	            int width = Math.max(1, this.tile.getBlockSize().size() * zoom);
-	            int height = Math.max(1, this.tile.getBlockSize().size() * zoom);
-	            this.legendValues[0] = width + "x" + height;
-	            if (mx >= left && mx <= left + size && my >= top && my <= top + size) {
-	                float fx = (mx - left) / size;
-	                float fz = (my - top) / size;
-	                int ix = NoiseUtil.round(fx * this.tile.getBlockSize().size());
-	                int iz = NoiseUtil.round(fz * this.tile.getBlockSize().size());
-	                Cell cell = this.tile.lookup(ix, iz);
-	                this.legendValues[1] = getTerrainName(cell);
-	                this.legendValues[2] = getBiomeName(cell);
-	
-	                int dx = (ix - (this.tile.getBlockSize().size() / 2)) * zoom;
-	                int dz = (iz - (this.tile.getBlockSize().size() / 2)) * zoom;
-	
-	                this.hoveredCoords = (this.centerX + dx) + ":" + (this.centerZ + dz);
-	                return true;
-	            } else {
-	            	this.hoveredCoords = "";
-	            }
-	        }
-	        return false;
-	    }
-
-	    private float getLegendScale() {
-	        int index = PresetEditorPage.this.screen.minecraft.options.guiScale().get() - 1;
-	        if (index < 0 || index >= LEGEND_SCALES.length) {
-	            // index=-1 == GuiScale(AUTO) which is the same as GuiScale(4)
-	            // values above 4 don't exist but who knows what mods might try set it to
-	            // in both cases use the smallest acceptable scale
-	            index = LEGEND_SCALES.length - 1;
-	        }
-	        return LEGEND_SCALES[index];
-	    }
-
-	    private void renderLegend(GuiGraphics guiGraphics, int mx, int my, Component[] labels, String[] values, int left, int top, int lineHeight, int color) {
-	        float scale = this.getLegendScale();
-	        PoseStack pose = guiGraphics.pose();
-	        	
-	        pose.pushPose();
-	        pose.translate(left + 3.75F * scale, top - lineHeight * (3.2F * scale), 0);
-	        pose.scale(scale, scale, 1);
-	
-	        Minecraft mc = Minecraft.getInstance();
-	        Font renderer = mc.font;
-	        int spacing = 0;
-	        for (Component s : labels) {
-	            spacing = Math.max(spacing, renderer.width(s));
-	        }
-	
-	        float maxWidth = (this.width - 4) / scale;
-	        for (int i = 0; i < labels.length && i < values.length; i++) {
-	        	Component label = labels[i];
-	            String value = values[i];
-	
-	            while (value.length() > 0 && spacing + renderer.width(value) > maxWidth) {
-	                value = value.substring(0, value.length() - 1);
-	            }
-	
-	            guiGraphics.drawString(renderer, label, 0, i * lineHeight, color);
-	            guiGraphics.drawString(renderer, value, spacing, i * lineHeight, color);
-	        }
-	
-	        pose.popPose();
-	
-	        if (!this.hoveredCoords.isEmpty()) {
-	        	guiGraphics.drawCenteredString(renderer, this.hoveredCoords, mx, my - 10, 0xFFFFFF);
-	        }
-	    }
-	
-	    private int getZoom() {
-	        return NoiseUtil.round(1.5F * (101 - (float) PresetEditorPage.this.zoom.getLerpedValue()));
-	    }
-	
-	    private static String getTerrainName(Cell cell) {
-	        if (cell.terrain.isRiver()) {
-	            return "river";
-	        }
-	        return cell.terrain.getName().toLowerCase();
-	    }
-	
-	    private static String getBiomeName(Cell cell) {
-	        String terrain = cell.terrain.getName().toLowerCase();
-	        if (terrain.contains("ocean")) {
-	            if (cell.temperature < 0.3F) {
-	                return "cold_" + terrain;
-	            }
-	            if (cell.temperature > 0.6F) {
-	                return "warm_" + terrain;
-	            }
-	            return terrain;
-	        }
-	        if (terrain.contains("river")) {
-	            return "river";
-	        }
-	        return cell.biome.name().toLowerCase();
-	    }
 	}
 }

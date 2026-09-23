@@ -5,6 +5,17 @@ import java.util.List;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import raccoonman.reterraforged.RTFCommon;
+import raccoonman.reterraforged.server.RTFMinecraftServer;
+import raccoonman.reterraforged.world.worldgen.feature.template.decorator.DecoratorConfig;
+import raccoonman.reterraforged.world.worldgen.feature.template.decorator.TemplateDecorator;
+import raccoonman.reterraforged.world.worldgen.feature.template.paste.Paste;
+import raccoonman.reterraforged.world.worldgen.feature.template.paste.PasteConfig;
+import raccoonman.reterraforged.world.worldgen.feature.template.paste.PasteType;
+import raccoonman.reterraforged.world.worldgen.feature.template.placement.TemplatePlacement;
+import raccoonman.reterraforged.world.worldgen.feature.template.template.Dimensions;
+import raccoonman.reterraforged.world.worldgen.feature.template.template.FeatureTemplate;
+import raccoonman.reterraforged.world.worldgen.feature.template.template.TemplateContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -15,18 +26,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
-import raccoonman.reterraforged.RTFCommon;
-import raccoonman.reterraforged.server.RTFMinecraftServer;
 import raccoonman.reterraforged.world.worldgen.feature.template.TemplateFeature.Config;
-import raccoonman.reterraforged.world.worldgen.feature.template.decorator.DecoratorConfig;
-import raccoonman.reterraforged.world.worldgen.feature.template.decorator.TemplateDecorator;
-import raccoonman.reterraforged.world.worldgen.feature.template.paste.Paste;
-import raccoonman.reterraforged.world.worldgen.feature.template.paste.PasteConfig;
-import raccoonman.reterraforged.world.worldgen.feature.template.paste.PasteType;
-import raccoonman.reterraforged.world.worldgen.feature.template.placement.TemplatePlacement;
-import raccoonman.reterraforged.world.worldgen.feature.template.template.Dimensions;
-import raccoonman.reterraforged.world.worldgen.feature.template.template.FeatureTemplate;
-import raccoonman.reterraforged.world.worldgen.feature.template.template.TemplateContext;
 
 public class TemplateFeature extends Feature<Config<?>> {
 
@@ -54,11 +54,17 @@ public class TemplateFeature extends Feature<Config<?>> {
             return false;
         }
         
-        if(world.getServer() instanceof RTFMinecraftServer rtfMinecraftServer) {
+        if(world.getServer() instanceof RTFMinecraftServer ftfMinecraftServer) {
 	        DecoratorConfig<T> decoratorConfig = config.decorator();
 	        
 	        ResourceLocation templateName = nextTemplate(config.templates, rand);
-	        FeatureTemplate template = rtfMinecraftServer.getFeatureTemplateManager().load(templateName);
+
+			// safely load features and fail verbosely otherwise
+	        FeatureTemplate template = ftfMinecraftServer.getFeatureTemplateManager().load(templateName);
+			if (template == null) {
+				RTFCommon.LOGGER.error("Template failed to load: " + templateName);
+				return false;
+			}
 	        
 	        Dimensions dimensions = template.getDimensions(mirror, rotation);
 	        TemplatePlacement<T> placement = config.placement();

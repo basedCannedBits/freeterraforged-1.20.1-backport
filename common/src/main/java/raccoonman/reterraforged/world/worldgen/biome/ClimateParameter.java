@@ -1,7 +1,7 @@
 package raccoonman.reterraforged.world.worldgen.biome;
 
-import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
+import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 
 public interface ClimateParameter {
 	float min();

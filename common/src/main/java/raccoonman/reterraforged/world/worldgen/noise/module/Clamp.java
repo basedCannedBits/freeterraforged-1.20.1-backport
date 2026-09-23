@@ -7,9 +7,9 @@ import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 record Clamp(Noise input, Noise min, Noise max) implements Noise {
 	public static final Codec<Clamp> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Clamp::input),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("min").forGetter(Clamp::min),
-		Noise.HOLDER_HELPER_CODEC.fieldOf("max").forGetter(Clamp::max)
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Clamp::input),
+		HOLDER_HELPER_CODEC.fieldOf("min").forGetter(Clamp::min),
+		HOLDER_HELPER_CODEC.fieldOf("max").forGetter(Clamp::max)
 	).apply(instance, Clamp::new));
 	
 	@Override

@@ -1,9 +1,9 @@
 package raccoonman.reterraforged.world.worldgen.cell.continent;
 
-import raccoonman.reterraforged.world.worldgen.cell.Cell;
-import raccoonman.reterraforged.world.worldgen.cell.CellPopulator;
 import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 import raccoonman.reterraforged.world.worldgen.noise.function.Interpolation;
+import raccoonman.reterraforged.world.worldgen.cell.Cell;
+import raccoonman.reterraforged.world.worldgen.cell.CellPopulator;
 
 public class ContinentLerper3 implements CellPopulator {
     private CellPopulator lower;

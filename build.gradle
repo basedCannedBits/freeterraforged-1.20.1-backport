@@ -43,3 +43,9 @@ allprojects {
         withSourcesJar()
     }
 }
+// Backport: show every compile error instead of stopping at javac's default 100
+allprojects {
+    tasks.withType(JavaCompile).configureEach {
+        options.compilerArgs += ["-Xmaxerrs", "5000"]
+    }
+}

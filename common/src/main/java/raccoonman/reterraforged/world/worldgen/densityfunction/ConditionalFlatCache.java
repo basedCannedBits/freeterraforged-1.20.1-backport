@@ -10,7 +10,7 @@ import net.minecraft.world.level.levelgen.DensityFunction;
 
 public record ConditionalFlatCache(DensityFunction function) implements MarkerFunction {
 	public static final Codec<ConditionalFlatCache> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		DensityFunction.HOLDER_HELPER_CODEC.fieldOf("function").forGetter(ConditionalFlatCache::function)
+		HOLDER_HELPER_CODEC.fieldOf("function").forGetter(ConditionalFlatCache::function)
 	).apply(instance, ConditionalFlatCache::new));
 
 	@Override

@@ -1,15 +1,14 @@
 package raccoonman.reterraforged.registries;
 
 import com.mojang.serialization.Codec;
-
+import raccoonman.reterraforged.world.worldgen.biome.modifier.BiomeModifier;
+import raccoonman.reterraforged.world.worldgen.noise.domain.Domain;
+import raccoonman.reterraforged.world.worldgen.noise.function.CurveFunction;
 import net.minecraft.core.Registry;
 import raccoonman.reterraforged.platform.RegistryUtil;
-import raccoonman.reterraforged.world.worldgen.biome.modifier.BiomeModifier;
 import raccoonman.reterraforged.world.worldgen.feature.chance.ChanceModifier;
 import raccoonman.reterraforged.world.worldgen.feature.template.decorator.TemplateDecorator;
 import raccoonman.reterraforged.world.worldgen.feature.template.placement.TemplatePlacement;
-import raccoonman.reterraforged.world.worldgen.noise.domain.Domain;
-import raccoonman.reterraforged.world.worldgen.noise.function.CurveFunction;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 import raccoonman.reterraforged.world.worldgen.structure.rule.StructureRule;
 

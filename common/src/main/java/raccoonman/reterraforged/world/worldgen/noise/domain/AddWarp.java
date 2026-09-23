@@ -3,7 +3,7 @@ package raccoonman.reterraforged.world.worldgen.noise.domain;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import raccoonman.reterraforged.world.worldgen.noise.module.Noise.Visitor;
+import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 
 public record AddWarp(Domain input1, Domain input2) implements Domain {
 	public static final Codec<AddWarp> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -22,7 +22,7 @@ public record AddWarp(Domain input1, Domain input2) implements Domain {
 	}
 
 	@Override
-	public Domain mapAll(Visitor visitor) {
+	public Domain mapAll(Noise.Visitor visitor) {
 		return new AddWarp(this.input1.mapAll(visitor), this.input2.mapAll(visitor));
 	}
 

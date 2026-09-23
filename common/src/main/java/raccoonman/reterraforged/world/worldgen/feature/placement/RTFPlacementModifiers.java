@@ -1,15 +1,15 @@
 package raccoonman.reterraforged.world.worldgen.feature.placement;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.serialization.Codec;
 
+import com.mojang.serialization.Codec;
+import raccoonman.reterraforged.platform.RegistryUtil;
+import raccoonman.reterraforged.world.worldgen.feature.placement.poisson.FastPoissonModifier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.minecraft.world.level.levelgen.placement.PlacementModifierType;
-import raccoonman.reterraforged.platform.RegistryUtil;
-import raccoonman.reterraforged.world.worldgen.feature.placement.poisson.FastPoissonModifier;
 
 public class RTFPlacementModifiers {
 	public static final PlacementModifierType<BlacklistDimensionFilter> BLACKLIST_DIMENSION = register("blacklist_dimension", BlacklistDimensionFilter.CODEC);

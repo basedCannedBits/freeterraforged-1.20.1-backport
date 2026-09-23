@@ -6,10 +6,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
+import raccoonman.reterraforged.RTFCommon;
 
 public class FeatureTemplateManager {
 	private ResourceManager resourceManager;
@@ -28,15 +27,15 @@ public class FeatureTemplateManager {
 	public FeatureTemplate load(ResourceLocation location) {
 		return this.cache.computeIfAbsent(location, this::read);
 	}
-	
+
 	private FeatureTemplate read(ResourceLocation location) {
 		return this.resourceManager.getResource(location).flatMap((resource) -> {
-			try(InputStream stream = resource.open()) {
+			try (InputStream stream = resource.open()) {
 				return FeatureTemplate.load(stream);
 			} catch (IOException e) {
-				e.printStackTrace();
+				RTFCommon.LOGGER.error("Failed to load template at " + location, e);
 				return Optional.empty();
 			}
-		}).orElse(new FeatureTemplate(ImmutableList.of()));
+		}).orElse(null);
 	}
 }

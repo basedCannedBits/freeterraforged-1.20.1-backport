@@ -1,14 +1,13 @@
 package raccoonman.reterraforged.data.worldgen.preset;
 
-import net.minecraft.data.worldgen.BootstapContext;
-import net.minecraft.resources.ResourceKey;
 import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
 import raccoonman.reterraforged.world.worldgen.noise.function.DistanceFunction;
 import raccoonman.reterraforged.world.worldgen.noise.function.EdgeFunction;
 import raccoonman.reterraforged.world.worldgen.noise.function.Interpolation;
-import raccoonman.reterraforged.world.worldgen.noise.module.Cache2d;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
+import net.minecraft.data.worldgen.BootstapContext;
+import net.minecraft.resources.ResourceKey;
+import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 
 public class PresetTerrainNoise {
 	public static final ResourceKey<Noise> MOUNTAIN_CHAIN_ALPHA = createKey("mountain_chain_alpha");

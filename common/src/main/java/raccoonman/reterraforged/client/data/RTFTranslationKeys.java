@@ -3,6 +3,19 @@ package raccoonman.reterraforged.client.data;
 import raccoonman.reterraforged.RTFCommon;
 
 public final class RTFTranslationKeys {
+	public static final String GUI_BUTTON_EDIT = resolve("gui.button.edit");
+	public static final String GUI_BUTTON_RENAME = resolve("gui.button.rename");
+	public static final String GUI_TOAST_PRESET_RENAMED = resolve("gui.toast.preset_renamed");
+	public static final String GUI_TOAST_PRESET_CREATED = resolve("gui.toast.preset_created");
+	public static final String GUI_SELECT_PRESET_NO_SELECTION = resolve("gui.select_preset.no_selection");
+	public static final String GUI_SELECT_PRESET_TEMPLATE_DESC = resolve("gui.select_preset.template_desc");
+	public static final String GUI_SELECT_PRESET_CUSTOM_DESC = resolve("gui.select_preset.custom_desc");
+	public static final String GUI_HEADER_YOUR_PRESETS = resolve("gui.header.your_presets");
+	public static final String GUI_EMPTY_USER_PRESETS = resolve("gui.empty.user_presets");
+	public static final String GUI_HEADER_INCLUDED_TEMPLATES = resolve("gui.header.included_templates");
+	public static final String GUI_LABEL_TEMPLATE_PRESET = resolve("gui.label.template_preset");
+	public static final String GUI_LABEL_USER_PRESET = resolve("gui.label.user_preset");
+	public static final String GUI_LABEL_LEGACY_USER_PRESET = resolve("gui.label.legacy_user_preset");
 	public static final String METADATA_DESCRIPTION = resolve("metadata.description");
 	public static final String PRESET_METADATA_DESCRIPTION = resolve("preset.metadata.description");
 	public static final String MUD_SWAMPS_METADATA_DESCRIPTION = resolve("mudSwamps.metadata.description");
@@ -18,15 +31,18 @@ public final class RTFTranslationKeys {
 	public static final String GUI_HUGE_BIOMES_PRESET_NAME = resolve("gui.preset.hugeBiomes.name");
 	public static final String GUI_LITE_PRESET_NAME = resolve("gui.preset.lite.name");
 	public static final String GUI_VANILLAISH_PRESET_NAME = resolve("gui.preset.vanillaish.name");
+	public static final String GUI_RIVERS_PRESET_NAME = resolve("gui.preset.rivers.name");
+	public static final String GUI_COMMUNITY1_PRESET_NAME = resolve("gui.preset.community1.name");
 	public static final String GUI_WORLD_SETTINGS_TITLE = resolve("gui.worldSettings.title");
 	public static final String GUI_SURFACE_SETTINGS_TITLE = resolve("gui.surfaceSettings.title");
-	public static final String GUI_CAVE_SETTINGS_TITLE = resolve("gui.caveSettings.title");
+	public static final String GUI_UNDERGROUND_SETTINGS_TITLE = resolve("gui.undergroundSettings.title");
 	public static final String GUI_CLIMATE_SETTINGS_TITLE = resolve("gui.climateSettings.title");
 	public static final String GUI_TERRAIN_SETTINGS_TITLE = resolve("gui.terrainSettings.title");
 	public static final String GUI_RIVER_SETTINGS_TITLE = resolve("gui.riverSettings.title");
 	public static final String GUI_FILTER_SETTINGS_TITLE = resolve("gui.filterSettings.title");
 	public static final String GUI_STRUCTURE_SETTINGS_TITLE = resolve("gui.structureSettings.title");
 	public static final String GUI_MISCELLANEOUS_SETTINGS_TITLE = resolve("gui.miscellaneousSettings.title");
+	public static final String GUI_ISLAND_SETTINGS_TITLE = resolve("gui.islandSettings.title");
 
 	public static final String GUI_BUTTON_TRUE = resolve("gui.button.true");
 	public static final String GUI_BUTTON_FALSE = resolve("gui.button.false");
@@ -38,6 +54,7 @@ public final class RTFTranslationKeys {
 	public static final String GUI_BUTTON_EXPORT_AS_DATAPACK = resolve("gui.button.export");
 	public static final String GUI_BUTTON_EXPORT_SUCCESS = resolve("gui.button.export.success");
 	public static final String GUI_BUTTON_SEED = resolve("gui.button.seed");
+	public static final String GUI_BUTTON_RANDOMIZE_SEED = resolve("gui.button.randomize.seed.tooltip");
 	public static final String GUI_BUTTON_CONTINENT_TYPE = resolve("gui.button.continentType");
 	public static final String GUI_BUTTON_CONTINENT_SHAPE = resolve("gui.button.continentShape");
 	public static final String GUI_BUTTON_SPAWN_TYPE = resolve("gui.button.spawnType");
@@ -45,6 +62,8 @@ public final class RTFTranslationKeys {
 	public static final String GUI_BUTTON_LEGACY_CARVER_DISTRIBUTION = resolve("gui.button.legacyCarverDistribution");
 	public static final String GUI_BUTTON_CLIMATE_SEED_OFFSET = resolve("gui.button.climateSeedOffset");
 	public static final String GUI_BUTTON_BIOME_EDGE_TYPE = resolve("gui.button.biomeEdgeType");
+	public static final String GUI_BUTTON_UNDERGROUND_BIOME_BANDING = resolve("gui.button.undergroundBiomeBanding");
+	public static final String GUI_BUTTON_RENDER_MODE = resolve("gui.button.renderMode");
 	public static final String GUI_BUTTON_TERRAIN_SEED_OFFSET = resolve("gui.button.terrainSeedOffset");
 	public static final String GUI_BUTTON_FANCY_MOUNTAINS = resolve("gui.button.fancyMountains");
 	public static final String GUI_BUTTON_LEGACY_MOUNTAIN_SCALING = resolve("gui.button.legacyMountainScaling");
@@ -61,7 +80,7 @@ public final class RTFTranslationKeys {
 	public static final String GUI_BUTTON_VANILLA_SPRINGS = resolve("gui.button.vanillaSprings");
 	public static final String GUI_BUTTON_VANILLA_LAVA_LAKES = resolve("gui.button.vanillaLavaLakes");
 	public static final String GUI_BUTTON_VANILLA_LAVA_SPRINGS = resolve("gui.button.vanillaLavaSprings");
-	
+	public static final String GUI_BUTTON_ENABLE_ARCHIPELAGO = resolve("gui.button.enableArchipelago");
 	public static final String GUI_SLIDER_ZOOM = resolve("gui.slider.zoom");
 	public static final String GUI_SLIDER_CONTINENT_SCALE = resolve("gui.slider.continentScale");
 	public static final String GUI_SLIDER_CONTINENT_JITTER = resolve("gui.slider.continentJitter");
@@ -79,6 +98,7 @@ public final class RTFTranslationKeys {
 	public static final String GUI_SLIDER_INLAND = resolve("gui.slider.inland");
 	public static final String GUI_SLIDER_WORLD_HEIGHT = resolve("gui.slider.worldHeight");
 	public static final String GUI_SLIDER_WORLD_DEPTH = resolve("gui.slider.worldDepth");
+	public static final String GUI_SLIDER_OCEAN_DEPTH = resolve("gui.slider.oceanDepth");
 	public static final String GUI_SLIDER_SEA_LEVEL = resolve("gui.slider.seaLevel");
 	public static final String GUI_SLIDER_LAVA_LEVEL = resolve("gui.slider.lavaLevel");
 	public static final String GUI_SLIDER_ROCK_VARIANCE = resolve("gui.slider.rockVariance");
@@ -107,6 +127,10 @@ public final class RTFTranslationKeys {
 	public static final String GUI_SLIDER_MOISTURE_MAX = resolve("gui.slider.moistureMax");
 	public static final String GUI_SLIDER_MOISTURE_BIAS = resolve("gui.slider.moistureBias");
 	public static final String GUI_SLIDER_BIOME_SIZE = resolve("gui.slider.biomeSize");
+	public static final String GUI_SLIDER_UNDERGROUND_BIOME_SIZE = resolve("gui.slider.undergroundBiomeSize");
+	public static final String GUI_SLIDER_UNDERGROUND_BIOME_VERTICAL_SIZE = resolve("gui.slider.undergroundBiomeVerticalSize");
+	public static final String GUI_SLIDER_UNDERGROUND_BIOME_COVERAGE = resolve("gui.slider.undergroundBiomeCoverage");
+	public static final String GUI_SLIDER_UNDERGROUND_BIOME_CLIMATE_INFLUENCE = resolve("gui.slider.undergroundBiomeClimateInfluence");
 	public static final String GUI_SLIDER_MACRO_NOISE_SIZE = resolve("gui.slider.macroNoiseSize");
 	public static final String GUI_SLIDER_BIOME_WARP_SCALE = resolve("gui.slider.biomeWarpScale");
 	public static final String GUI_SLIDER_BIOME_WARP_STRENGTH = resolve("gui.slider.biomeWarpStrength");
@@ -118,6 +142,7 @@ public final class RTFTranslationKeys {
 	public static final String GUI_SLIDER_TERRAIN_REGION_SIZE = resolve("gui.slider.terrainRegionSize");
 	public static final String GUI_SLIDER_GLOBAL_VERTICAL_SCALE = resolve("gui.slider.globalVerticalScale");
 	public static final String GUI_SLIDER_GLOBAL_HORIZONTAL_SCALE = resolve("gui.slider.globalHorizontalScale");
+	public static final String GUI_SLIDER_MOUNTAIN_VARIETY = resolve("gui.slider.mountainVariety");
 	public static final String GUI_SLIDER_TERRAIN_WEIGHT = resolve("gui.slider.terrain.weight");
 	public static final String GUI_SLIDER_TERRAIN_BASE_SCALE = resolve("gui.slider.terrain.baseScale");
 	public static final String GUI_SLIDER_TERRAIN_VERTICAL_SCALE = resolve("gui.slider.terrain.verticalScale");
@@ -154,19 +179,35 @@ public final class RTFTranslationKeys {
 	public static final String GUI_SLIDER_STRATA_REGION_SIZE = resolve("gui.slider.strataRegionSize");
 	public static final String GUI_SLIDER_MOUNTAIN_BIOME_USAGE = resolve("gui.slider.mountainBiomeUsage");
 	public static final String GUI_SLIDER_VOLCANO_BIOME_USAGE = resolve("gui.slider.volcanoBiomeUsage");
-
+	public static final String GUI_SLIDER_ISLAND_DENSITY = resolve("gui.slider.islandDensity");
+	public static final String GUI_SLIDER_ISLAND_SIZE = resolve("gui.slider.islandSize");
+	public static final String GUI_SLIDER_ISLAND_HEIGHT = resolve("gui.slider.islandHeight");
+	public static final String GUI_SLIDER_ISLAND_BASE_SCALE = resolve("gui.slider.islandBaseScale");
+	public static final String GUI_SLIDER_ISLAND_VERTICAL_SCALE = resolve("gui.slider.islandVerticalScale");
+	public static final String GUI_SLIDER_ISLAND_HORIZONTAL_SCALE = resolve("gui.slider.islandHorizontalScale");
+	public static final String GUI_SLIDER_ISLAND_MOUNTAIN_CHANCE = resolve("gui.slider.islandMountainChance");
+	public static final String GUI_SLIDER_ISLAND_VOLCANO_CHANCE = resolve("gui.slider.islandVolcanoChance");
+	public static final String GUI_SLIDER_ISLAND_VOLCANISM_SCALE = resolve("gui.slider.islandVolcanismScale");
+	public static final String GUI_SLIDER_ISLAND_MOUNTAIN_SCALE = resolve("gui.slider.islandMountainScale");
+	public static final String GUI_SLIDER_ISLAND_OFFSHORE_DEPTH = resolve("gui.slider.islandOffshoreDepth");
+	public static final String GUI_SLIDER_ISLAND_BEACH_WIDTH = resolve("gui.slider.islandBeachWidth");
+	public static final String GUI_SLIDER_ISLAND_BEACH_COVERAGE = resolve("gui.slider.islandBeachCoverage");
 	public static final String GUI_LABEL_PREVIEW_AREA = resolve("gui.label.previewArea");
 	public static final String GUI_LABEL_PREVIEW_TERRAIN = resolve("gui.label.previewTerrain");
 	public static final String GUI_LABEL_PREVIEW_BIOME = resolve("gui.label.previewBiome");
+	public static final String GUI_LABEL_PREVIEW_SPAWN = resolve("gui.label.previewSpawn");
 	public static final String GUI_LABEL_CONTINENT = resolve("gui.label.continent");
 	public static final String GUI_LABEL_CONTROL_POINTS = resolve("gui.label.controlPoints");
 	public static final String GUI_LABEL_PROPERTIES = resolve("gui.label.properties");
-	public static final String GUI_LABEL_SURFACE_EROSION = resolve("gui.label.surfaceErosion");
+	public static final String GUI_LABEL_TRANSITIONS = resolve("gui.label.transitions");
+	public static final String GUI_LABEL_SCREE_THRESHOLDS = resolve("gui.label.scree.thresholds");
+	public static final String GUI_LABEL_EROSION_DECORATOR = resolve("gui.label.erosion.decorator");
 	public static final String GUI_LABEL_NOISE_CAVES = resolve("gui.label.noiseCaves");
 	public static final String GUI_LABEL_CARVERS = resolve("gui.label.carvers");
 	public static final String GUI_LABEL_TEMPERATURE = resolve("gui.label.temperature");
 	public static final String GUI_LABEL_MOISTURE = resolve("gui.label.moisture");
 	public static final String GUI_LABEL_BIOME_SHAPE = resolve("gui.label.biomeShape");
+	public static final String GUI_LABEL_UNDERGROUND_BIOMES = resolve("gui.label.undergroundBiomes");
 	public static final String GUI_LABEL_BIOME_EDGE_SHAPE = resolve("gui.label.biomeEdgeShape");
 	public static final String GUI_LABEL_GENERAL = resolve("gui.label.general");
 	public static final String GUI_LABEL_STEPPE = resolve("gui.label.steppe");
@@ -183,8 +224,20 @@ public final class RTFTranslationKeys {
 	public static final String GUI_LABEL_LAKES = resolve("gui.label.lakes");
 	public static final String GUI_LABEL_WETLANDS = resolve("gui.label.wetlands");
 	public static final String GUI_LABEL_EROSION = resolve("gui.label.erosion");
+	public static final String GUI_LABEL_HYDRAULIC_EROSION = resolve("gui.label.hydraulic.erosion");
 	public static final String GUI_LABEL_SMOOTHING = resolve("gui.label.smoothing");
-	
+	public static final String GUI_LABEL_ISLAND = resolve("gui.label.island");
+    public static final String GUI_LABEL_RIVER_FLOW_DYNAMICS = resolve("gui.label.river.flow.dynamics");
+	public static final String GUI_BUTTON_FLOW_PARTICLES = resolve("gui.button.river.flow.particles");
+	public static final String GUI_BUTTON_BOAT_FLOW_DYNAMICS = resolve("gui.button.boat.flow.dynamics");
+	public static final String GUI_BUTTON_NAVIGABLE_WATERFALLS = resolve("gui.button.boat.navigable.waterfalls");
+    public static final String GUI_SLIDER_ISLAND_MOUNTAIN_HORIZONTAL_SCALE = resolve("gui.slider.islandMountainHorizontalScale");
+	public static final String GUI_SLIDER_ISLAND_VOLCANISM_HORIZONTAL_SCALE = resolve("gui.slider.islandVolcanismHorizontalScale");
+    public static final String GUI_SLIDER_ISLAND_MACRO_DENSITY = resolve("gui.slider.islandMacroDensityPercentage");
+	public static final String GUI_LABEL_ISLAND_TRANSITIONS = resolve("gui.label.islandTransitions");
+	public static final String GUI_LABEL_ISLAND_SCALES = resolve("gui.label.islandScales");
+	public static final String GUI_LABEL_ISLAND_CHANCES = resolve("gui.label.islandChances");
+
 	private static String resolve(String key) {
 		return RTFCommon.MOD_ID + "." + key;
 	}

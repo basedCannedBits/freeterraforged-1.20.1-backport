@@ -1,5 +1,13 @@
 package raccoonman.reterraforged.world.worldgen.cell.continent.simple;
 
+import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
+import raccoonman.reterraforged.world.worldgen.noise.domain.Domain;
+import raccoonman.reterraforged.world.worldgen.noise.domain.Domains;
+import raccoonman.reterraforged.world.worldgen.noise.function.DistanceFunction;
+import raccoonman.reterraforged.world.worldgen.noise.function.EdgeFunction;
+import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
+import raccoonman.reterraforged.world.worldgen.util.PosUtil;
+import raccoonman.reterraforged.world.worldgen.util.Seed;
 import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings;
 import raccoonman.reterraforged.data.worldgen.preset.settings.WorldSettings.ControlPoints;
 import raccoonman.reterraforged.world.worldgen.GeneratorContext;
@@ -8,16 +16,7 @@ import raccoonman.reterraforged.world.worldgen.cell.continent.SimpleContinent;
 import raccoonman.reterraforged.world.worldgen.cell.rivermap.LegacyRiverCache;
 import raccoonman.reterraforged.world.worldgen.cell.rivermap.RiverCache;
 import raccoonman.reterraforged.world.worldgen.cell.rivermap.Rivermap;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil.Vec2f;
-import raccoonman.reterraforged.world.worldgen.noise.domain.Domain;
-import raccoonman.reterraforged.world.worldgen.noise.domain.Domains;
-import raccoonman.reterraforged.world.worldgen.noise.function.DistanceFunction;
-import raccoonman.reterraforged.world.worldgen.noise.function.EdgeFunction;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
-import raccoonman.reterraforged.world.worldgen.util.PosUtil;
-import raccoonman.reterraforged.world.worldgen.util.Seed;
 
 public abstract class ContinentGenerator implements SimpleContinent {
     protected int seed;
@@ -83,7 +82,7 @@ public abstract class ContinentGenerator implements SimpleContinent {
             for (int dx = -1; dx <= 1; ++dx) {
                 int cx = xr + dx;
                 int cy = yr + dy;
-                Vec2f vec = NoiseUtil.cell(this.seed, cx, cy);
+                NoiseUtil.Vec2f vec = NoiseUtil.cell(this.seed, cx, cy);
                 float cxf = cx + vec.x() * this.offsetAlpha;
                 float cyf = cy + vec.y() * this.offsetAlpha;
                 float distance = this.distanceFunc.apply(cxf - px, cyf - py);
@@ -123,7 +122,7 @@ public abstract class ContinentGenerator implements SimpleContinent {
             for (int dx = -1; dx <= 1; ++dx) {
                 int cx = xr + dx;
                 int cy = yr + dy;
-                Vec2f vec = NoiseUtil.cell(this.seed, cx, cy);
+                NoiseUtil.Vec2f vec = NoiseUtil.cell(this.seed, cx, cy);
                 float cxf = cx + vec.x() * this.offsetAlpha;
                 float cyf = cy + vec.y() * this.offsetAlpha;
                 float distance = this.distanceFunc.apply(cxf - px, cyf - py);
@@ -158,7 +157,7 @@ public abstract class ContinentGenerator implements SimpleContinent {
             for (int dx = -1; dx <= 1; ++dx) {
                 int cx = xr + dx;
                 int cy = yr + dy;
-                Vec2f vec = NoiseUtil.cell(this.seed, cx, cy);
+                NoiseUtil.Vec2f vec = NoiseUtil.cell(this.seed, cx, cy);
                 float cxf = cx + vec.x() * this.offsetAlpha;
                 float cyf = cy + vec.y() * this.offsetAlpha;
                 float distance = this.distanceFunc.apply(cxf - px, cyf - py);

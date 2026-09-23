@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import raccoonman.reterraforged.world.worldgen.feature.template.placement.TemplatePlacement;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -52,7 +53,6 @@ import raccoonman.reterraforged.world.worldgen.feature.template.buffer.TemplateB
 import raccoonman.reterraforged.world.worldgen.feature.template.paste.Paste;
 import raccoonman.reterraforged.world.worldgen.feature.template.paste.PasteConfig;
 import raccoonman.reterraforged.world.worldgen.feature.template.paste.PasteType;
-import raccoonman.reterraforged.world.worldgen.feature.template.placement.TemplatePlacement;
 import raccoonman.reterraforged.world.worldgen.feature.util.BlockReader;
 
 public class FeatureTemplate {

@@ -7,7 +7,7 @@ import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 public record LegacyMoisture(Noise source, int power) implements Noise {
 	public static final Codec<LegacyMoisture> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("source").forGetter(LegacyMoisture::source),
+		HOLDER_HELPER_CODEC.fieldOf("source").forGetter(LegacyMoisture::source),
 		Codec.INT.fieldOf("power").forGetter(LegacyMoisture::power)
 	).apply(instance, LegacyMoisture::new));
 	

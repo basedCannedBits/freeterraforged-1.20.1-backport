@@ -2,12 +2,13 @@ package raccoonman.reterraforged.client.gui.screen.page;
 
 import java.util.Optional;
 
+import raccoonman.reterraforged.client.gui.screen.presetconfig.PresetEditorPage;
+import raccoonman.reterraforged.client.gui.widget.Label;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import raccoonman.reterraforged.client.gui.widget.Label;
 
 public abstract class LinkedPageScreen extends Screen {
 	public Button previousButton,
@@ -21,7 +22,7 @@ public abstract class LinkedPageScreen extends Screen {
 	}
 	
 	public void setPage(Page page) {
-		this.currentPage.onClose();
+		this.currentPage.onCancel();
 		this.currentPage = page;
 		this.rebuildWidgets();
 	}
@@ -29,8 +30,8 @@ public abstract class LinkedPageScreen extends Screen {
 	@Override
 	public void init() {
 		super.init();
-		
-		int buttonsCenter = this.width / 2;
+
+		int buttonsCenter = this.width/2;
         int buttonWidth = 50;
         int buttonHeight = 20;
         int buttonPad = 2;
@@ -57,8 +58,22 @@ public abstract class LinkedPageScreen extends Screen {
 		
 		this.currentPage.init();
 
-		// these must be overlayed onto the current page
-		this.addRenderableOnly(new Label(16, 15, 20, 20, this.currentPage.title()));
+		// Center PresetEditorPage
+		if ((this.currentPage instanceof PresetEditorPage)) {
+			// 1. Cast the page to grab the actual central column object
+			BisectedPage<?, ?, ?> bisectedPage = (BisectedPage<?, ?, ?>) this.currentPage;
+
+			// 2. Find the exact horizontal midpoint of that central box
+			int columnCenter = bisectedPage.left.getX() + (bisectedPage.left.getWidth() / 2);
+
+			// 3. Measure the text width and offset it so the string's center aligns with the column's center
+			int textWidth = this.font.width(this.currentPage.title());
+			int centeredX = columnCenter - (textWidth / 2);
+
+			this.addRenderableOnly(new Label(centeredX, 10, textWidth, 20, this.currentPage.title()));
+		} else {
+			this.addRenderableOnly(new Label(16, 10, 20, 20, this.currentPage.title()));
+		}
 
 		this.addRenderableWidget(this.cancelButton);
 		this.addRenderableWidget(this.doneButton);
@@ -74,11 +89,11 @@ public abstract class LinkedPageScreen extends Screen {
 	
 	@Override
 	public void onClose() {
-		this.currentPage.onClose();
+		this.currentPage.onCancel();
 	}
 	
 	public void onDone() {
-		this.currentPage.onDone();
+		this.currentPage.onSave();
 	}
 	
 	public interface Page {
@@ -90,10 +105,10 @@ public abstract class LinkedPageScreen extends Screen {
 		
 		Optional<Page> next();
 		
-		default void onClose() {
+		default void onCancel() {
 		}
 		
-		default void onDone() {
+		default void onSave() {
 		}
 	}
 }

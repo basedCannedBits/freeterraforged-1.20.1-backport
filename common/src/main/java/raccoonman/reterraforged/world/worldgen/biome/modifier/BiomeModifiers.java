@@ -17,7 +17,7 @@ import raccoonman.reterraforged.platform.RegistryUtil;
 import raccoonman.reterraforged.registries.RTFBuiltInRegistries;
 
 public class BiomeModifiers {
-	
+
 	@ExpectPlatform
 	public static void bootstrap() {
 		throw new UnsupportedOperationException();
@@ -27,7 +27,7 @@ public class BiomeModifiers {
 	public static BiomeModifier add(Order order, GenerationStep.Decoration step, Holder<PlacedFeature>... features) {
 		return add(order, step, HolderSet.direct(features));
 	}
-	
+
 	public static BiomeModifier add(Order order, GenerationStep.Decoration step, HolderSet<PlacedFeature> features) {
 		return add(order, step, Optional.empty(), features);
 	}
@@ -40,25 +40,25 @@ public class BiomeModifiers {
 	public static BiomeModifier add(Order order, GenerationStep.Decoration step, Filter.Behavior filterBehavior, HolderSet<Biome> biomes, HolderSet<PlacedFeature> features) {
 		return add(order, step, Optional.of(Pair.of(filterBehavior, biomes)), features);
 	}
-	
+
 	@ExpectPlatform
 	public static BiomeModifier add(Order order, GenerationStep.Decoration step, Optional<Pair<Filter.Behavior, HolderSet<Biome>>> biomes, HolderSet<PlacedFeature> features) {
 		throw new UnsupportedOperationException();
 	}
 
-	public static BiomeModifier replace(GenerationStep.Decoration step, Map<ResourceKey<PlacedFeature>, Holder<PlacedFeature>> replacements) {
+	public static BiomeModifier replace(GenerationStep.Decoration step, Map<ResourceKey<PlacedFeature>, ResourceKey<PlacedFeature>> replacements) {
 		return replace(step, Optional.empty(), replacements);
 	}
 
-	public static BiomeModifier replace(GenerationStep.Decoration step, HolderSet<Biome> biomes, Map<ResourceKey<PlacedFeature>, Holder<PlacedFeature>> replacements) {
+	public static BiomeModifier replace(GenerationStep.Decoration step, HolderSet<Biome> biomes, Map<ResourceKey<PlacedFeature>, ResourceKey<PlacedFeature>> replacements) {
 		return replace(step, Optional.of(biomes), replacements);
 	}
-	
+
 	@ExpectPlatform
-	public static BiomeModifier replace(GenerationStep.Decoration step, Optional<HolderSet<Biome>> biomes, Map<ResourceKey<PlacedFeature>, Holder<PlacedFeature>> replacements) {
+	public static BiomeModifier replace(GenerationStep.Decoration step, Optional<HolderSet<Biome>> biomes, Map<ResourceKey<PlacedFeature>, ResourceKey<PlacedFeature>> replacements) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	public static void register(String name, Codec<? extends BiomeModifier> value) {
 		RegistryUtil.register(RTFBuiltInRegistries.BIOME_MODIFIER_TYPE, name, value);
 	}

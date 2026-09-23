@@ -3,9 +3,9 @@ package raccoonman.reterraforged.world.worldgen.noise.domain;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noise.Visitor;
-import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
 
 record DomainWarp(Noise x, Noise z, Noise mappedX, Noise mappedZ, Noise distance) implements Domain {
 	public static final Codec<DomainWarp> CODEC = RecordCodecBuilder.create(instance -> instance.group(

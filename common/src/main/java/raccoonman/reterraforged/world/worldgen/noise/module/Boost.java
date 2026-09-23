@@ -7,7 +7,7 @@ import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 record Boost(Noise input, int iterations) implements Noise {
 	public static final Codec<Boost> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Boost::input),
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Boost::input),
 		Codec.INT.fieldOf("iterations").forGetter(Boost::iterations)
 	).apply(instance, Boost::new));
 	

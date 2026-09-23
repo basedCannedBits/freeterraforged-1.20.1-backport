@@ -1,7 +1,7 @@
 package raccoonman.reterraforged.world.worldgen.biome;
 
-import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 import raccoonman.reterraforged.world.worldgen.noise.module.Noises;
+import raccoonman.reterraforged.world.worldgen.noise.module.Noise;
 
 public interface BiomeParameter {
 	float min();
@@ -12,6 +12,10 @@ public interface BiomeParameter {
 		return (this.min() + this.max()) / 2.0F;
 	}
 	
+	default float lerp(float alpha) {
+		return this.min() + alpha * (this.max() - this.min());
+	}
+
 	default Noise source() {
 		return Noises.constant(this.mid());
 	}

@@ -2,9 +2,9 @@ package raccoonman.reterraforged.world.worldgen.noise.module;
 
 import com.mojang.serialization.Codec;
 
+import raccoonman.reterraforged.registries.RTFRegistries;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.RegistryFileCodec;
-import raccoonman.reterraforged.registries.RTFRegistries;
 
 public interface Noise {
     public static final Codec<Noise> DIRECT_CODEC = Noises.DIRECT_CODEC;

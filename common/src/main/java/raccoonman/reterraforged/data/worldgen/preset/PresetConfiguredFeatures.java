@@ -5,6 +5,14 @@ import java.util.List;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 
+import raccoonman.reterraforged.data.worldgen.preset.settings.MiscellaneousSettings;
+import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
+import raccoonman.reterraforged.data.worldgen.preset.settings.SurfaceSettings;
+import raccoonman.reterraforged.world.worldgen.feature.BushFeature;
+import raccoonman.reterraforged.world.worldgen.feature.DecorateSnowFeature;
+import raccoonman.reterraforged.world.worldgen.feature.ErodeFeature;
+import raccoonman.reterraforged.world.worldgen.feature.RTFFeatures;
+import raccoonman.reterraforged.world.worldgen.feature.template.placement.TemplatePlacements;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
@@ -32,13 +40,6 @@ import net.minecraft.world.level.levelgen.feature.stateproviders.BlockStateProvi
 import net.minecraft.world.level.levelgen.feature.stateproviders.RuleBasedBlockStateProvider;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import raccoonman.reterraforged.RTFCommon;
-import raccoonman.reterraforged.data.worldgen.preset.settings.MiscellaneousSettings;
-import raccoonman.reterraforged.data.worldgen.preset.settings.Preset;
-import raccoonman.reterraforged.data.worldgen.preset.settings.SurfaceSettings;
-import raccoonman.reterraforged.world.worldgen.feature.BushFeature;
-import raccoonman.reterraforged.world.worldgen.feature.DecorateSnowFeature;
-import raccoonman.reterraforged.world.worldgen.feature.ErodeFeature;
-import raccoonman.reterraforged.world.worldgen.feature.RTFFeatures;
 import raccoonman.reterraforged.world.worldgen.feature.SwampSurfaceFeature;
 import raccoonman.reterraforged.world.worldgen.feature.chance.ChanceFeature;
 import raccoonman.reterraforged.world.worldgen.feature.chance.ChanceModifier;
@@ -48,7 +49,6 @@ import raccoonman.reterraforged.world.worldgen.feature.template.decorator.Decora
 import raccoonman.reterraforged.world.worldgen.feature.template.decorator.TemplateDecorator;
 import raccoonman.reterraforged.world.worldgen.feature.template.decorator.TreeContext;
 import raccoonman.reterraforged.world.worldgen.feature.template.paste.PasteConfig;
-import raccoonman.reterraforged.world.worldgen.feature.template.placement.TemplatePlacements;
 
 public class PresetConfiguredFeatures {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> ERODE = createKey("erode");
@@ -103,13 +103,26 @@ public class PresetConfiguredFeatures {
 	public static final ResourceKey<ConfiguredFeature<?, ?>> REDWOOD_TREES = createKey("redwood_trees");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> JUNGLE_TREES = createKey("jungle_trees");
 	public static final ResourceKey<ConfiguredFeature<?, ?>> JUNGLE_EDGE_TREES = createKey("jungle_edge_trees");
+	public static final ResourceKey<ConfiguredFeature<?, ?>> RIVER_GASKET = createKey("river_gasket");
 	
 	public static void bootstrap(Preset preset, BootstapContext<ConfiguredFeature<?, ?>> ctx) {
 		MiscellaneousSettings miscellaneous = preset.miscellaneous();
 		SurfaceSettings surface = preset.surface();
 		SurfaceSettings.Erosion erosion = surface.erosion();
-		
-		ErodeFeature.Config erodeConfig = new ErodeFeature.Config(erosion.rockVariance, erosion.rockMin, erosion.dirtVariance, erosion.dirtMin, erosion.rockSteepness, erosion.dirtSteepness, erosion.screeSteepness, 6F / 255F, 3F / 255F, 256, 3F / 255F, 0.55F);
+
+		// Pass the configured selectors directly into the final parameters of the Config record
+		ErodeFeature.Config erodeConfig = new ErodeFeature.Config(
+				erosion.rockVariance,
+				erosion.rockMin,
+				erosion.dirtVariance,
+				erosion.dirtMin,
+				erosion.rockSteepness,
+				erosion.dirtSteepness,
+				erosion.screeSteepness,
+				6F / 255F,
+				3F / 255F
+		);
+
 		if(miscellaneous.erosionDecorator) {
 			FeatureUtils.register(ctx, ERODE, RTFFeatures.ERODE, erodeConfig);
 		}
@@ -119,6 +132,7 @@ public class PresetConfiguredFeatures {
 		}
 		
 		FeatureUtils.register(ctx, SWAMP_SURFACE, RTFFeatures.SWAMP_SURFACE, new SwampSurfaceFeature.Config(Blocks.CLAY.defaultBlockState(), Blocks.GRAVEL.defaultBlockState(), Blocks.DIRT.defaultBlockState()));
+		FeatureUtils.register(ctx, RIVER_GASKET, RTFFeatures.RIVER_GASKET, FeatureConfiguration.NONE);
 		
 		if(miscellaneous.customBiomeFeatures) {
 			HolderGetter<PlacedFeature> placedFeatures = ctx.lookup(Registries.PLACED_FEATURE);

@@ -3,10 +3,10 @@ package raccoonman.reterraforged.world.worldgen.cell.terrain.region;
 import java.util.LinkedList;
 import java.util.List;
 
-import raccoonman.reterraforged.world.worldgen.cell.Cell;
-import raccoonman.reterraforged.world.worldgen.cell.CellPopulator;
 import raccoonman.reterraforged.world.worldgen.cell.terrain.populator.WeightedPopulator;
 import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
+import raccoonman.reterraforged.world.worldgen.cell.Cell;
+import raccoonman.reterraforged.world.worldgen.cell.CellPopulator;
 
 public class RegionSelector implements CellPopulator {
 	private int maxIndex;

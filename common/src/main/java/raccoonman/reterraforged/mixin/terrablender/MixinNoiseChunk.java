@@ -2,6 +2,7 @@ package raccoonman.reterraforged.mixin.terrablender;
 
 import java.util.List;
 
+import raccoonman.reterraforged.world.worldgen.terrablender.TBClimateSampler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,7 +20,6 @@ import net.minecraft.world.level.levelgen.NoiseRouter;
 import net.minecraft.world.level.levelgen.NoiseSettings;
 import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.blending.Blender;
-import raccoonman.reterraforged.world.worldgen.terrablender.TBClimateSampler;
 
 @Mixin(NoiseChunk.class)
 public class MixinNoiseChunk {

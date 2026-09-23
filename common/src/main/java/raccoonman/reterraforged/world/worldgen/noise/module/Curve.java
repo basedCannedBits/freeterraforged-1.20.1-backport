@@ -7,7 +7,7 @@ import raccoonman.reterraforged.world.worldgen.noise.function.CurveFunction;
 
 record Curve(Noise input, CurveFunction curveFunction) implements Noise {
 	public static final Codec<Curve> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-		Noise.HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Curve::input),
+		HOLDER_HELPER_CODEC.fieldOf("input").forGetter(Curve::input),
 		CurveFunction.CODEC.fieldOf("curve_function").forGetter(Curve::curveFunction)
 	).apply(instance, Curve::new));
 	

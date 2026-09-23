@@ -1,8 +1,8 @@
 package raccoonman.reterraforged.world.worldgen.cell.terrain.region;
 
+import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 import raccoonman.reterraforged.world.worldgen.cell.Cell;
 import raccoonman.reterraforged.world.worldgen.cell.CellPopulator;
-import raccoonman.reterraforged.world.worldgen.noise.NoiseUtil;
 
 public class RegionLerper implements CellPopulator {
     private CellPopulator lower;

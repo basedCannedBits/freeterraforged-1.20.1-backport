@@ -127,12 +127,12 @@ public abstract class MixinMultiNoiseBiomeSource implements RTFMultiNoiseBiomeSo
     }
 
     @Inject(
-            method = "possibleBiomes",
+            method = "collectPossibleBiomes", // 1.20.1: BiomeSource.possibleBiomes() is final; subclasses override collectPossibleBiomes()
             at = @At("HEAD"),
             cancellable = true,
             require = 0
     )
-    private void rtf$bypassInlinePossibleBiomesCrash(CallbackInfoReturnable<java.util.Set<Holder<Biome>>> cir) {
+    private void rtf$bypassInlinePossibleBiomesCrash(CallbackInfoReturnable<java.util.stream.Stream<Holder<Biome>>> cir) {
         // Only intercept inline parameter lists (Either.left) used by preset previews.
         // Runtime worldgen sources (Either.right) are left untouched.
         if (this.parameters != null && this.parameters.left().isPresent()) {
@@ -144,7 +144,7 @@ public abstract class MixinMultiNoiseBiomeSource implements RTFMultiNoiseBiomeSo
                             .map(holder -> (Holder<Biome>) holder)
                             .collect(java.util.stream.Collectors.toUnmodifiableSet());
 
-                    cir.setReturnValue(dynamicBiomes);
+                    cir.setReturnValue(dynamicBiomes.stream());
                 }
             } catch (Exception ignored) {
                 // Fallback to default execution if uninitialized

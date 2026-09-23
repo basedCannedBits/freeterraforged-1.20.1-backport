@@ -89,7 +89,7 @@ abstract class MixinNoiseBasedChunkGenerator extends ChunkGenerator {
 	}
 
 	@Redirect(
-			method = { "fillFromNoise", "populateNoise" },
+			method = "fillFromNoise",
 			at = @At(
 					value = "INVOKE",
 					target = "Lnet/minecraft/world/level/levelgen/NoiseSettings;height()I"

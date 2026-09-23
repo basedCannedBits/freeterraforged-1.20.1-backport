@@ -63,7 +63,7 @@ class ClimateSettingsTest {
 
 	private static ClimateSettings.BiomeShape decode(JsonObject json) {
 		return ClimateSettings.BiomeShape.CODEC.parse(JsonOps.INSTANCE, json)
-			.getOrThrow(message -> new AssertionError("Biome shape failed to decode: " + message));
+			.getOrThrow(false, message -> { throw new AssertionError("Biome shape failed to decode: " + message); });
 	}
 
 	private static void assertRejected(JsonObject json) {

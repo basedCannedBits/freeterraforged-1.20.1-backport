@@ -289,7 +289,7 @@ class MixinParameterList<T> implements TerraBlenderParameterList<T> {
 		}
 		T originalValue = original.findValue(targetPoint);
 		if (reterraforged$isDeferredPlaceholder(originalValue)) {
-			Climate.ParameterList<T> defaultTree = surfaceTrees.getFirst();
+			Climate.ParameterList<T> defaultTree = surfaceTrees.get(0);
 			if (defaultTree == null) {
 				return null;
 			}
@@ -354,7 +354,7 @@ class MixinParameterList<T> implements TerraBlenderParameterList<T> {
 
 		T originalValue = original.findValue(targetPoint);
 		if (reterraforged$isDeferredPlaceholder(originalValue)) {
-			Climate.ParameterList<T> defaultTree = surfaceTrees.getFirst();
+			Climate.ParameterList<T> defaultTree = surfaceTrees.get(0);
 			if (defaultTree == null) {
 				return new TerraBlenderParameterList.SelectionDiagnostics<>(treeIndex, null, null, "missing_default_index");
 			}

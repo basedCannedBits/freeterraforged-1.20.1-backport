@@ -453,7 +453,7 @@ public final class UndergroundBiomeBanding {
 
 		private T findValue(Climate.TargetPoint target, long regionKey, float climateInfluence) {
 			if (this.candidates.size() == 1) {
-				return this.candidates.getFirst().value();
+				return this.candidates.get(0).value();
 			}
 
 			double minimumDistance = Double.POSITIVE_INFINITY;
@@ -494,7 +494,7 @@ public final class UndergroundBiomeBanding {
 					return this.candidates.get(index).value();
 				}
 			}
-			return this.candidates.getLast().value();
+			return this.candidates.get(this.candidates.size() - 1).value();
 		}
 	}
 

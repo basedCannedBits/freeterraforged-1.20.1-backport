@@ -50,7 +50,10 @@ public class RuntimeRegistryExporter implements DataProvider {
         }
 
         Registry<T> registry = optionalRegistry.get();
-        PackOutput.PathProvider pathProvider = this.output.createRegistryElementsPathProvider(registryData.key());
+        // 1.20.1: no createRegistryElementsPathProvider; vanilla registries use the bare path, modded ones are namespaced (Forge layout)
+        net.minecraft.resources.ResourceLocation registryId = registryData.key().location();
+        String registryDir = registryId.getNamespace().equals("minecraft") ? registryId.getPath() : registryId.getNamespace() + "/" + registryId.getPath();
+        PackOutput.PathProvider pathProvider = this.output.createPathProvider(PackOutput.Target.DATA_PACK, registryDir);
 
         for (Holder.Reference<T> holder : registry.holders().toList()) {
             // Encode using the un-tainted pure Vanilla ops

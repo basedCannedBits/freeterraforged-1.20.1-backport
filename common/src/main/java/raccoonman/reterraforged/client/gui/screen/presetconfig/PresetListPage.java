@@ -547,7 +547,7 @@ class PresetListPage extends BisectedPage<PresetConfigScreen, AbstractWidget, Ab
 			this.text = text;
 			int wrapWidth = Math.max(10, this.getWidth() - 8);
 			List<FormattedCharSequence> lines = this.font.split(this.text, wrapWidth);
-			this.setHeight(Math.max(24, lines.size() * 10 + 6));
+			this.height = Math.max(24, lines.size() * 10 + 6);
 		}
 
 		@Override

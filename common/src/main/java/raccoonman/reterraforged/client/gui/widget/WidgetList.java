@@ -83,4 +83,31 @@ public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelecti
 			return Collections.singletonList(this.widget);
 		}
     }
+
+    // 1.20.1 backport: AbstractSelectionList has no getX/getY/getWidth/setX/setWidth/setHeight yet
+    public int getX() {
+        return this.x0;
+    }
+
+    public int getY() {
+        return this.y0;
+    }
+
+    public int getWidth() {
+        return this.width;
+    }
+
+    public void setX(int x) {
+        this.setLeftPos(x);
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+        this.x1 = this.x0 + width;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+        this.y1 = this.y0 + height;
+    }
 }

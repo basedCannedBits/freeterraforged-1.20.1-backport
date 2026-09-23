@@ -1,10 +1,10 @@
-package raccoonman.reterraforged.compat.biolith;
+package etcodehome.freeterraforged.compat.biolith;
 
 import java.util.List;
 
 import com.google.common.collect.ImmutableList;
 
-import raccoonman.reterraforged.platform.ModLoaderUtil;
+import etcodehome.freeterraforged.platform.ModLoaderUtil;
 
 public class BiolithCompat {
 	public static final List<String> BIOLITH_COMPAT_MIXINS = ImmutableList.of(
@@ -26,6 +26,6 @@ public class BiolithCompat {
 	}
 
 	private static String mixinClass(String className) {
-		return "raccoonman.reterraforged.mixin." + className;
+		return "etcodehome.freeterraforged.mixin." + className;
 	}
 }

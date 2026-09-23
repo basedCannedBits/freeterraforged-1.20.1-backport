@@ -1,4 +1,4 @@
-package raccoonman.reterraforged.compat.biolith;
+package etcodehome.freeterraforged.compat.biolith;
 
 public final class BiolithPreviewCapabilities {
 	private static final String PLACEMENT = "com.terraformersmc.biolith.impl.biome.DimensionBiomePlacement";

@@ -1,4 +1,4 @@
-package raccoonman.reterraforged.compat.biolith;
+package etcodehome.freeterraforged.compat.biolith;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,7 +17,7 @@ import com.terraformersmc.biolith.api.biome.sub.Criterion;
 import com.terraformersmc.biolith.impl.biome.BiomeCoordinator;
 import com.terraformersmc.biolith.impl.biome.DimensionBiomePlacement;
 import com.terraformersmc.biolith.impl.noise.OpenSimplexNoise2;
-import raccoonman.reterraforged.world.worldgen.biome.BiomePreviewIntegration;
+import etcodehome.freeterraforged.world.worldgen.biome.BiomePreviewIntegration;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
@@ -28,11 +28,11 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.InclusiveRange;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Climate;
-import raccoonman.reterraforged.mixin.biolith.BiolithDimensionBiomePlacementAccessor;
-import raccoonman.reterraforged.mixin.biolith.BiolithReplacementRequestAccessor;
-import raccoonman.reterraforged.mixin.biolith.BiolithReplacementRequestSetAccessor;
-import raccoonman.reterraforged.mixin.biolith.BiolithSubBiomeRequestAccessor;
-import raccoonman.reterraforged.mixin.biolith.BiolithSubBiomeRequestSetAccessor;
+import etcodehome.freeterraforged.mixin.biolith.BiolithDimensionBiomePlacementAccessor;
+import etcodehome.freeterraforged.mixin.biolith.BiolithReplacementRequestAccessor;
+import etcodehome.freeterraforged.mixin.biolith.BiolithReplacementRequestSetAccessor;
+import etcodehome.freeterraforged.mixin.biolith.BiolithSubBiomeRequestAccessor;
+import etcodehome.freeterraforged.mixin.biolith.BiolithSubBiomeRequestSetAccessor;
 
 public final class BiolithPreviewContext {
 	private static final ThreadLocal<State> ACTIVE = new ThreadLocal<>();
@@ -243,21 +243,21 @@ public final class BiolithPreviewContext {
 		Map<ResourceKey<Biome>, List<Replacement>> result = new HashMap<>();
 		Random random = new Random(seed);
 		Map<ResourceKey<Biome>, Object> source =
-			((BiolithDimensionBiomePlacementAccessor) placement).reterraforged$getReplacementRequests();
+			((BiolithDimensionBiomePlacementAccessor) placement).freeterraforged$getReplacementRequests();
 		for (Map.Entry<ResourceKey<Biome>, Object> entry : source.entrySet()) {
 			BiolithReplacementRequestSetAccessor requestSet =
 				(BiolithReplacementRequestSetAccessor) entry.getValue();
-			if (requestSet.reterraforged$isFinalized()) {
-				List<Replacement> finalized = requestSet.reterraforged$getRequests().stream()
+			if (requestSet.freeterraforged$isFinalized()) {
+				List<Replacement> finalized = requestSet.freeterraforged$getRequests().stream()
 					.map(rawRequest -> {
 						BiolithReplacementRequestAccessor request = (BiolithReplacementRequestAccessor) rawRequest;
 						return new Replacement(
-							request.reterraforged$getBiome(),
-							request.reterraforged$getRate(),
-							request.reterraforged$getBiomeEntry(),
-							request.reterraforged$getStart(),
-							request.reterraforged$getEnd(),
-							request.reterraforged$isFromData()
+							request.freeterraforged$getBiome(),
+							request.freeterraforged$getRate(),
+							request.freeterraforged$getBiomeEntry(),
+							request.freeterraforged$getStart(),
+							request.freeterraforged$getEnd(),
+							request.freeterraforged$isFromData()
 						);
 					})
 					.toList();
@@ -265,15 +265,15 @@ public final class BiolithPreviewContext {
 				continue;
 			}
 			List<Replacement> requests = new ArrayList<>();
-			for (Object rawRequest : requestSet.reterraforged$getRequests()) {
+			for (Object rawRequest : requestSet.freeterraforged$getRequests()) {
 				BiolithReplacementRequestAccessor request = (BiolithReplacementRequestAccessor) rawRequest;
 				requests.add(new Replacement(
-					request.reterraforged$getBiome(),
-					request.reterraforged$getRate(),
+					request.freeterraforged$getBiome(),
+					request.freeterraforged$getRate(),
 					null,
 					0.0D,
 					0.0D,
-					request.reterraforged$isFromData()
+					request.freeterraforged$isFromData()
 				));
 			}
 			requests.removeIf(request -> request.biome().equals(DimensionBiomePlacement.VANILLA_PLACEHOLDER));
@@ -320,15 +320,15 @@ public final class BiolithPreviewContext {
 	) {
 		Map<ResourceKey<Biome>, List<SubRequest>> result = new HashMap<>();
 		Map<ResourceKey<Biome>, Object> source =
-			((BiolithDimensionBiomePlacementAccessor) placement).reterraforged$getSubBiomeRequests();
+			((BiolithDimensionBiomePlacementAccessor) placement).freeterraforged$getSubBiomeRequests();
 		for (Map.Entry<ResourceKey<Biome>, Object> entry : source.entrySet()) {
 			List<SubRequest> requests = ((BiolithSubBiomeRequestSetAccessor) entry.getValue())
-				.reterraforged$getRequests()
+				.freeterraforged$getRequests()
 				.stream()
 				.map(rawRequest -> {
 					BiolithSubBiomeRequestAccessor request = (BiolithSubBiomeRequestAccessor) rawRequest;
-					ResourceKey<Biome> biome = request.reterraforged$getBiome();
-					Criterion criterion = copyCriterion(request.reterraforged$getCriterion(), biomes, registryOps);
+					ResourceKey<Biome> biome = request.freeterraforged$getBiome();
+					Criterion criterion = copyCriterion(request.freeterraforged$getCriterion(), biomes, registryOps);
 					return new SubRequest(
 						biome,
 						criterion,

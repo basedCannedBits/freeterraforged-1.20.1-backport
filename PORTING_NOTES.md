@@ -1,11 +1,11 @@
 # FTF -> 1.20.1 Forge backport notes
 
-Base: equalizer32/NeoTerraForged `1.20.1` @ 2c029ca (RTF 0.0.6, what Kanned actually built; Forge pinned to 47.1.30)
+Base: equalizer32/NeoTerraForged `1.20.1` @ 2c029ca (FTF 0.0.6, what Kanned actually built; Forge pinned to 47.1.30)
 Upstream: ETcodehome/FreeTerraForged `1.21.1_v1.0.0` @ dfa4368
 Common ancestor: cabeff6 (NTF 1.21.1 "Removed unused classes"). NTF's own 1.21->1.20.1 backport
 (cabeff6 -> 2c029ca) is the recipe reused here.
 
-Method: FTF renamed back to RTF identity (branch in history), then a real 3-way git merge into NTF 1.20.1.
+Method: FTF renamed back to FTF identity (branch in history), then a real 3-way git merge into NTF 1.20.1.
 Non-conflicting NTF backport changes merged automatically; conflicts resolved to FTF logic + 1.20.1 rules.
 
 Applied 1.20.1 rules: MapCodec->Codec (dispatch types), BootstrapContext->BootstapContext,

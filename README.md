@@ -1,10 +1,10 @@
-# ReTerraForged
-A community driven fork of the Legendary ReTerraForged project for modern minecraft providing heavily customizable overworld terrain generation.
+# FreeTerraForged
+A community driven fork of the Legendary FreeTerraForged project for modern minecraft providing heavily customizable overworld terrain generation.
 Additional feature contributions are welcomed via forking and raising a merge PR.
 
 ### We stand on the shoulders of giants
 - Original project https://github.com/TerraForged/TerraForged
-- Builds on the substantial post v1.19+ work of Racoonman2 in https://github.com/racoonman2/ReTerraForged
+- Builds on the substantial post v1.19+ work of Racoonman2 in https://github.com/racoonman2/FreeTerraForged
 - Finishes the Neoforge port work started by Equalizer32 in https://github.com/equalizer32/NeoTerraForged/tree/1.21.1
 
 ### Licensing 

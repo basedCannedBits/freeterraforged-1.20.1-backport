@@ -8,4 +8,4 @@ pluginManagement {
 }
 
 include("common", "forge")
-rootProject.name = "ReTerraForged"
+rootProject.name = "FreeTerraForged"

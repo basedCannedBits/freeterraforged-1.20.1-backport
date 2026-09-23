@@ -1,4 +1,4 @@
-package raccoonman.reterraforged.mixin.biolith;
+package etcodehome.freeterraforged.mixin.biolith;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(targets = "com.terraformersmc.biolith.impl.biome.DimensionBiomePlacement$ReplacementRequestSet", remap = false)
 public interface BiolithReplacementRequestSetAccessor {
 	@Accessor(value = "finalized", remap = false)
-	boolean reterraforged$isFinalized();
+	boolean freeterraforged$isFinalized();
 
 	@Accessor(value = "requests", remap = false)
-	List<Object> reterraforged$getRequests();
+	List<Object> freeterraforged$getRequests();
 }

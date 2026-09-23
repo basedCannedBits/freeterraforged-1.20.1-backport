@@ -1,8 +1,8 @@
-package raccoonman.reterraforged.mixin;
+package etcodehome.freeterraforged.mixin;
 
-import raccoonman.reterraforged.network.FlowFieldSyncPayload;
-import raccoonman.reterraforged.world.worldgen.ChunkFlowField;
-import raccoonman.reterraforged.world.worldgen.IFlowFieldHolder;
+import etcodehome.freeterraforged.network.FlowFieldSyncPayload;
+import etcodehome.freeterraforged.world.worldgen.ChunkFlowField;
+import etcodehome.freeterraforged.world.worldgen.IFlowFieldHolder;
 import net.minecraft.network.protocol.common.ClientboundCustomPayloadPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.PlayerChunkSender;
@@ -22,7 +22,7 @@ public class MixinPlayerChunkSender {
     )
     private static void onSendChunk(ServerGamePacketListenerImpl listener, ServerLevel level, LevelChunk chunk, CallbackInfo ci) {
         if (chunk instanceof IFlowFieldHolder holder) {
-            ChunkFlowField flowField = holder.reterraforged$getFlowField();
+            ChunkFlowField flowField = holder.freeterraforged$getFlowField();
 
             if (flowField != null && flowField.hasRivers()) {
                 listener.send(new ClientboundCustomPayloadPacket(

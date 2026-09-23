@@ -1,4 +1,4 @@
-package raccoonman.reterraforged.network;
+package etcodehome.freeterraforged.network;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -9,7 +9,7 @@ import net.minecraft.world.level.ChunkPos;
 public record FlowFieldSyncPayload(ChunkPos pos, byte[] rawGrid) implements CustomPacketPayload {
 
     public static final Type<FlowFieldSyncPayload> TYPE = new Type<>(
-            new ResourceLocation("reterraforged", "flow_sync")
+            new ResourceLocation("freeterraforged", "flow_sync")
     );
 
     public static final StreamCodec<FriendlyByteBuf, FlowFieldSyncPayload> CODEC = StreamCodec.of(

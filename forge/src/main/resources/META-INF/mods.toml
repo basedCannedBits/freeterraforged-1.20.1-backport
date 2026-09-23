@@ -3,24 +3,24 @@ loaderVersion="[40,)"
 license="MIT"
 
 [[mods]]
-modId="reterraforged"
-displayName="ReTerraForged"
-version="0.0.6"
+modId="freeterraforged"
+displayName="FreeTerraForged (1.20.1 Forge backport)"
+version="1.0.0-backport.1"
 authors="dags,Won-Ton,raccoonman"
 credits="dags,Won-Ton,raccoonman"
 logoFile="logo.png"
-displayURL="https://github.com/racoonman2/reterraforged/"
-issueTrackerURL="https://github.com/racoonman2/reterraforged/issues"
-description="A continuation of https://github.com/TerraForged/TerraForged"
+displayURL="https://github.com/ETcodehome/FreeTerraForged"
+issueTrackerURL="https://github.com/ETcodehome/FreeTerraForged/issues"
+description="FreeTerraForged 1.0.0, backported to run on Forge 1.20.1. Not an official FreeTerraForged release."
 
-[[dependencies.reterraforged]]
+[[dependencies.freeterraforged]]
     modId="forge"
     mandatory=true
     versionRange="[40,)"
     ordering="NONE"
     side="BOTH"
 
-[[dependencies.reterraforged]]
+[[dependencies.freeterraforged]]
 	modId = "minecraft"
 	mandatory = true
 	versionRange = "[1.20.1,)"

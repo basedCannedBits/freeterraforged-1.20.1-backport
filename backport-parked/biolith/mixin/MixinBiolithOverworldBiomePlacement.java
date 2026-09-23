@@ -1,8 +1,8 @@
-package raccoonman.reterraforged.mixin.biolith;
+package etcodehome.freeterraforged.mixin.biolith;
 
 import com.terraformersmc.biolith.impl.biome.OverworldBiomePlacement;
 import com.terraformersmc.biolith.impl.noise.OpenSimplexNoise2;
-import raccoonman.reterraforged.compat.biolith.BiolithPreviewContext;
+import etcodehome.freeterraforged.compat.biolith.BiolithPreviewContext;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -19,9 +19,9 @@ public abstract class MixinBiolithOverworldBiomePlacement {
 		),
 		remap = false
 	)
-	private OpenSimplexNoise2 reterraforged$previewReplacementNoise(OverworldBiomePlacement placement) {
+	private OpenSimplexNoise2 freeterraforged$previewReplacementNoise(OverworldBiomePlacement placement) {
 		OpenSimplexNoise2 original = ((BiolithDimensionBiomePlacementAccessor) placement)
-			.reterraforged$getReplacementNoise();
+			.freeterraforged$getReplacementNoise();
 		return BiolithPreviewContext.replacementNoise(original);
 	}
 
@@ -33,8 +33,8 @@ public abstract class MixinBiolithOverworldBiomePlacement {
 		),
 		remap = false
 	)
-	private int[] reterraforged$previewSeedlets(OverworldBiomePlacement placement) {
-		int[] original = ((BiolithDimensionBiomePlacementAccessor) placement).reterraforged$getSeedlets();
+	private int[] freeterraforged$previewSeedlets(OverworldBiomePlacement placement) {
+		int[] original = ((BiolithDimensionBiomePlacementAccessor) placement).freeterraforged$getSeedlets();
 		return BiolithPreviewContext.seedlets(original);
 	}
 }

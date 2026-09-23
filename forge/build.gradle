@@ -18,14 +18,14 @@ loom {
     
     forge {
         dataGen {
-            mod "reterraforged"
+            mod "freeterraforged"
         }
     
         convertAccessWideners = true
         extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
 
-        mixinConfig "reterraforged-common.mixins.json"
-        mixinConfig "reterraforged-forge.mixins.json"
+        mixinConfig "freeterraforged-common.mixins.json"
+        mixinConfig "freeterraforged-forge.mixins.json"
     }
 }
 

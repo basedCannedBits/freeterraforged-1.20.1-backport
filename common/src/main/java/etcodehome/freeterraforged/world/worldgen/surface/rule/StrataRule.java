@@ -76,13 +76,28 @@ public record StrataRule(ResourceLocation name, Holder<Noise> selector, List<Str
 				Codec.FLOAT.fieldOf("max_depth").forGetter(Strata::maxDepth)
 		).apply(instance, Strata::new));
 
+		// Diagnostic (backport): print the resolved tag order + the actual seeded draws, once per tag,
+		// so we can directly compare Java-17 vs Java-21 runs against real numbers instead of theory.
+		private static final java.util.Set<TagKey<Block>> DIAG_LOGGED = java.util.concurrent.ConcurrentHashMap.newKeySet();
+
 		public List<Layer> generateLayers(RandomSource random) {
 			int lastIndex = -1;
 			int layers = this.minLayers + NoiseUtil.round(random.nextFloat() * (this.maxLayers - this.minLayers));
 			List<Layer> result = new ArrayList<>();
 			List<Holder<Block>> materials = ImmutableList.copyOf(BuiltInRegistries.BLOCK.getTagOrEmpty(this.materials));
 
+			boolean diag = DIAG_LOGGED.add(this.materials);
+			if (diag) {
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < materials.size(); i++) {
+					sb.append(i).append('=').append(materials.get(i).unwrapKey().map(k -> k.location().toString()).orElse("?")).append(' ');
+				}
+				etcodehome.freeterraforged.FTFCommon.LOGGER.info(
+						"StrataDiag tag={} resolvedOrder({} total): {}", this.materials.location(), materials.size(), sb);
+			}
+
 			int seed = random.nextInt();
+			StringBuilder draws = diag ? new StringBuilder() : null;
 			for (int i = 0; i < layers; i++) {
 				int attempts = this.attempts;
 				int index = random.nextInt(materials.size());
@@ -94,7 +109,14 @@ public record StrataRule(ResourceLocation name, Holder<Noise> selector, List<Str
 					BlockState material = materials.get(index).value().defaultBlockState();
 					float depth = this.minDepth + random.nextFloat() * (this.maxDepth - this.minDepth);
 					result.add(new Layer(material, Noises.shiftSeed(Noises.mul(this.noise.value(), depth), random.nextInt()), seed));
+					if (draws != null) {
+						draws.append("idx=").append(index).append('(').append(material).append(") ");
+					}
 				}
+			}
+			if (diag) {
+				etcodehome.freeterraforged.FTFCommon.LOGGER.info(
+						"StrataDiag tag={} layerCount={} drawSeed={} draws: {}", this.materials.location(), layers, seed, draws);
 			}
 			return result;
 		}
@@ -166,10 +188,26 @@ public record StrataRule(ResourceLocation name, Holder<Noise> selector, List<Str
 			}
 		}
 
+		private static final java.util.concurrent.atomic.AtomicInteger DIAG_COUNT = new java.util.concurrent.atomic.AtomicInteger();
+
 		private List<Layer> selectLayers(int x, int z) {
 			float selector = this.selector.compute(x, z, 0);
 			int index = (int) (selector * this.strata.size());
 			index = Math.min(this.strata.size() - 1, index);
+			// Diagnostic (backport): log the raw selector value + chosen realization at a handful of fixed
+			// coordinates, so Java-17 vs Java-21 runs can be diffed as raw numbers, not visual guesses.
+			if ((x == 0 && z == 0) || (x == 512 && z == 512) || (x == -512 && z == 512)) {
+				if (DIAG_COUNT.incrementAndGet() <= 12) {
+					List<Layer> chosen = this.strata.get(index);
+					StringBuilder sb = new StringBuilder();
+					for (Layer l : chosen) {
+						sb.append(l.material()).append(' ');
+					}
+					etcodehome.freeterraforged.FTFCommon.LOGGER.info(
+							"StrataDiag pos=({},{}) rawSelectorFloat={} strataListSize={} chosenIndex={} layers: {}",
+							x, z, Float.toHexString(selector), this.strata.size(), index, sb);
+				}
+			}
 			return this.strata.get(index);
 		}
 	}

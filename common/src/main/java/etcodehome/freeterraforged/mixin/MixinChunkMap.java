@@ -68,4 +68,20 @@ public class MixinChunkMap {
 			ftfRandomState.initialize(serverLevel.registryAccess());
 		}
 	}
+
+	// 1.20.1 backport: real FTF (1.21.1+) hooks PlayerChunkSender.sendChunk, a class that doesn't exist in
+	// 1.20.1. playerLoadedChunk is the equivalent point in this version's pipeline -- it fires once per
+	// player per chunk actually sent to them, with the same information available (player, chunk).
+	@Inject(
+		at = @At("TAIL"),
+		method = "playerLoadedChunk"
+	)
+	private void freeterraforged$onPlayerLoadedChunk(net.minecraft.server.level.ServerPlayer serverPlayer, org.apache.commons.lang3.mutable.MutableObject<net.minecraft.network.protocol.game.ClientboundLevelChunkWithLightPacket> packetHolder, net.minecraft.world.level.chunk.LevelChunk levelChunk, CallbackInfo ci) {
+		if (levelChunk instanceof etcodehome.freeterraforged.world.worldgen.IFlowFieldHolder holder) {
+			etcodehome.freeterraforged.world.worldgen.ChunkFlowField flowField = holder.freeterraforged$getFlowField();
+			if (flowField != null && flowField.hasRivers()) {
+				etcodehome.freeterraforged.platform.FTFNetworkUtil.sendFlowFieldSync(serverPlayer, levelChunk.getPos(), flowField.getRawGrid());
+			}
+		}
+	}
 }

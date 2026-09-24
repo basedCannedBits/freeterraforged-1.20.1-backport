@@ -67,6 +67,8 @@ public class FTFForge {
 		}
 
 		RegistryUtilImpl.register(modBus);
+
+		etcodehome.freeterraforged.network.FTFForgeNetwork.register();
 	}
 
 	private static final String EXPORT_PRESET_PROPERTY = "freeterraforged.exportDefaultPreset";

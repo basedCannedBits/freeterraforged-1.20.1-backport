@@ -84,7 +84,25 @@ public record StrataRule(ResourceLocation name, Holder<Noise> selector, List<Str
 			int lastIndex = -1;
 			int layers = this.minLayers + NoiseUtil.round(random.nextFloat() * (this.maxLayers - this.minLayers));
 			List<Layer> result = new ArrayList<>();
+			// Fix (backport): measured directly against the real FTF NeoForge 1.21.1 jar (via a standalone
+			// probe mod querying the same tag independently) -- NeoForge resolves #freeterraforged:rock to
+			// [stone, granite, andesite, diorite], exactly matching the tag JSON's declared order. Forge
+			// 1.20.1's getTagOrEmpty() does NOT preserve that order for this tag (measured: it returns
+			// [granite, andesite, stone, diorite] instead), even though the vanilla tag-loading source looks
+			// like it should. Since the same seed draws the same *index* on both platforms, this reordering
+			// was the actual, sole cause of granite/stone (etc.) swapping identity between builds. Soil/
+			// sediment/clay were not affected (measured identical on both platforms) so are left untouched.
 			List<Holder<Block>> materials = ImmutableList.copyOf(BuiltInRegistries.BLOCK.getTagOrEmpty(this.materials));
+			if (this.materials.location().getPath().equals("rock")) {
+				List<String> neoforgeOrder = List.of("minecraft:stone", "minecraft:granite", "minecraft:andesite", "minecraft:diorite");
+				materials = materials.stream()
+						.sorted(java.util.Comparator.comparingInt(holder -> {
+							String id = holder.unwrapKey().map(key -> key.location().toString()).orElse("");
+							int idx = neoforgeOrder.indexOf(id);
+							return idx < 0 ? Integer.MAX_VALUE : idx;
+						}))
+						.collect(ImmutableList.toImmutableList());
+			}
 
 			boolean diag = DIAG_LOGGED.add(this.materials);
 			if (diag) {

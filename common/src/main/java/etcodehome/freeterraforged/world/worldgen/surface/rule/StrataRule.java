@@ -80,7 +80,19 @@ public record StrataRule(ResourceLocation name, Holder<Noise> selector, List<Str
 			int lastIndex = -1;
 			int layers = this.minLayers + NoiseUtil.round(random.nextFloat() * (this.maxLayers - this.minLayers));
 			List<Layer> result = new ArrayList<>();
-			List<Holder<Block>> materials = ImmutableList.copyOf(BuiltInRegistries.BLOCK.getTagOrEmpty(this.materials));
+			// Fix (backport): upstream FTF resolves the tag straight from registry iteration order, which
+			// depends on Minecraft's internal block-registration sequence -- a sequence that differs between
+			// MC versions and mod loaders. Since this list is then indexed by a seeded random draw, the same
+			// seed produces the same *index* everywhere, but that index silently points at a different block
+			// depending on platform (e.g. "stone" on one, "granite" on another) -- this is the exact cause of
+			// entire strata bands swapping identity between our Forge 1.20.1 build and the real NeoForge 1.21.1
+			// release. Sorting by resource location makes the ordering canonical and reproducible regardless
+			// of registry internals, so the same seed always yields the same rock type on every platform.
+			List<Holder<Block>> materials = BuiltInRegistries.BLOCK.getTagOrEmpty(this.materials).stream()
+					.sorted(java.util.Comparator.comparing(holder -> holder.unwrapKey()
+							.map(key -> key.location().toString())
+							.orElse("")))
+					.collect(ImmutableList.toImmutableList());
 
 			int seed = random.nextInt();
 			for (int i = 0; i < layers; i++) {

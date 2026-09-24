@@ -144,8 +144,9 @@ public record Erosion(Noise input, int seed, int octaves, float strength, float 
 		return dx * dx + dy * dy;
 	}
 
+	// Backport: StrictMath, not Math -- see NoiseUtil for why.
 	private static float sqrt(float value) {
-		return (float) Math.sqrt(value);
+		return (float) StrictMath.sqrt(value);
 	}
 
 	public enum BlendMode implements StringRepresentable {

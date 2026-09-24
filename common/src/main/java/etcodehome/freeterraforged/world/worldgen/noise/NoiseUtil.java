@@ -206,12 +206,17 @@ public class NoiseUtil {
         return xd * g.x() + yd * g.y();
     }
     
+    // Backport: StrictMath instead of Math -- Math.* is explicitly NOT guaranteed bit-identical across
+    // JVM/Java versions (it may use faster, version-specific intrinsics); StrictMath is. This table (and
+    // every value derived from it) is built once at class-load and feeds every Perlin/Worley noise call in
+    // the game, so any drift here cascades into every downstream terrain/strata decision. Using StrictMath
+    // makes this deterministic regardless of which Java version the server happens to run.
     public static float pow(float value, float power) {
-        return (float)Math.pow(value, power);
+        return (float)StrictMath.pow(value, power);
     }
     
     public static float sqrt(float value) {
-        return (float)Math.sqrt(value);
+        return (float)StrictMath.sqrt(value);
     }
     
     public static float sin(float r) {
@@ -228,7 +233,7 @@ public class NoiseUtil {
     }
     
     static {
-        SQRT2 = (float)Math.sqrt(2.0);
+        SQRT2 = (float)StrictMath.sqrt(2.0);
         MOORE = new Vec2i[] { new Vec2i(-1, -1), new Vec2i(0, -1), new Vec2i(1, -1), new Vec2i(-1, 0), new Vec2i(0, 0), new Vec2i(1, 0), new Vec2i(-1, 1), new Vec2i(0, 1), new Vec2i(1, 1) };
         GRAD_2D = new Vec2f[] { new Vec2f(-1.0f, -1.0f), new Vec2f(1.0f, -1.0f), new Vec2f(-1.0f, 1.0f), new Vec2f(1.0f, 1.0f), new Vec2f(0.0f, -1.0f), new Vec2f(-1.0f, 0.0f), new Vec2f(0.0f, 1.0f), new Vec2f(1.0f, 0.0f) };
         GRAD_2D_24 = new Vec2f[] { new Vec2f(0.13052619f, 0.9914449f), new Vec2f(0.38268343f, 0.9238795f), new Vec2f(0.6087614f, 0.7933533f), new Vec2f(0.6087614f, 0.7933533f), new Vec2f(0.7933533f, 0.6087614f), new Vec2f(0.9238795f, 0.38268343f), new Vec2f(0.9914449f, 0.13052619f), new Vec2f(0.9914449f, 0.13052619f), new Vec2f(0.9914449f, -0.13052619f), new Vec2f(0.9238795f, -0.38268343f), new Vec2f(0.7933533f, -0.6087614f), new Vec2f(0.7933533f, -0.6087614f), new Vec2f(0.6087614f, -0.7933533f), new Vec2f(0.38268343f, -0.9238795f), new Vec2f(0.13052619f, -0.9914449f), new Vec2f(0.13052619f, -0.9914449f), new Vec2f(-0.13052619f, -0.9914449f), new Vec2f(-0.38268343f, -0.9238795f), new Vec2f(-0.6087614f, -0.7933533f), new Vec2f(-0.6087614f, -0.7933533f), new Vec2f(-0.7933533f, -0.6087614f), new Vec2f(-0.9238795f, -0.38268343f), new Vec2f(-0.9914449f, -0.13052619f), new Vec2f(-0.9914449f, -0.13052619f), new Vec2f(-0.9914449f, 0.13052619f), new Vec2f(-0.9238795f, 0.38268343f), new Vec2f(-0.7933533f, 0.6087614f), new Vec2f(-0.7933533f, 0.6087614f), new Vec2f(-0.6087614f, 0.7933533f), new Vec2f(-0.38268343f, 0.9238795f), new Vec2f(-0.13052619f, 0.9914449f), new Vec2f(-0.13052619f, 0.9914449f) };
@@ -242,10 +247,10 @@ public class NoiseUtil {
         degToIndex = NoiseUtil.SIN_COUNT / NoiseUtil.degFull;
         SIN = new float[NoiseUtil.SIN_COUNT];
         for (int i = 0; i < NoiseUtil.SIN_COUNT; ++i) {
-            NoiseUtil.SIN[i] = (float)Math.sin((i + 0.5f) / NoiseUtil.SIN_COUNT * NoiseUtil.radFull);
+            NoiseUtil.SIN[i] = (float)StrictMath.sin((i + 0.5f) / NoiseUtil.SIN_COUNT * NoiseUtil.radFull);
         }
         for (int i = 0; i < 360; i += 90) {
-            NoiseUtil.SIN[(int)(i * NoiseUtil.degToIndex) & NoiseUtil.SIN_MASK] = (float)Math.sin(i * 3.141592653589793 / 180.0);
+            NoiseUtil.SIN[(int)(i * NoiseUtil.degToIndex) & NoiseUtil.SIN_MASK] = (float)StrictMath.sin(i * 3.141592653589793 / 180.0);
         }
     }
     

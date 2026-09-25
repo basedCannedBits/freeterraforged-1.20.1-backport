@@ -40,9 +40,16 @@ public final class BiolithPreviewContext {
 		};
 	}
 
-	// No-op for this Biolith version: unlike 3.x, 1.0.1-beta.1's selection methods don't need an
-	// early biome-lookup handoff from us -- they use whatever lookup Biolith itself already has.
+	// Biolith's own mixin into vanilla's MultiNoiseBiomeSource calls BiomeCoordinator.getBiomeLookupOrThrow(),
+	// which is normally only populated once during real server startup -- something FTF's preview never
+	// runs. Without this, that call throws NoSuchElementException the instant a preview samples a biome.
+	// registries is already a RegistryAccess.Frozen by the time a preview runs, matching the field's
+	// actual declared type, so we can set it directly.
 	public static void preInitializeBiomeLookup(RegistryAccess registries) {
+		if (registries instanceof RegistryAccess.Frozen frozen) {
+			((etcodehome.freeterraforged.mixin.biolith.BiolithBiomeCoordinatorAccessor) (Object) null)
+				.freeterraforged$setRegistryManagerStatic(frozen);
+		}
 	}
 
 	public static AutoCloseable open(long seed) {

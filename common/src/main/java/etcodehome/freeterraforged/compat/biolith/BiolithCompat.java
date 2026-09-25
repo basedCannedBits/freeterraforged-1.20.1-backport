@@ -13,7 +13,8 @@ import etcodehome.freeterraforged.platform.ModLoaderUtil;
 public class BiolithCompat {
 	public static final List<String> BIOLITH_COMPAT_MIXINS = ImmutableList.of(
 		mixinClass("biolith.BiolithDimensionBiomePlacementAccessor"),
-		mixinClass("biolith.MixinBiolithOverworldBiomePlacement")
+		mixinClass("biolith.MixinBiolithOverworldBiomePlacement"),
+		mixinClass("biolith.BiolithBiomeCoordinatorAccessor")
 	);
 
 	public static boolean isEnabled() {

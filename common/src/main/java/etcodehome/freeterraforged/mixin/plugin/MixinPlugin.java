@@ -45,7 +45,10 @@ public class MixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public List<String> getMixins() {
-		return TBCompat.TERRABLENDER_COMPAT_MIXINS.stream().map((str) -> {
+		return java.util.stream.Stream.concat(
+				TBCompat.TERRABLENDER_COMPAT_MIXINS.stream(),
+				BiolithCompat.BIOLITH_COMPAT_MIXINS.stream()
+		).map((str) -> {
 			return str.replace("etcodehome.freeterraforged.mixin.", "");
 		}).toList();
 	}

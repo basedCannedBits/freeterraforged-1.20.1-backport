@@ -237,7 +237,22 @@ public final class BiomePreviewResolver {
 	}
 
 	public BiomePreviewIntegration.Session openIntegrationSession() {
-		return BiomePreviewIntegrations.open(this.integrationContext, error -> {}, this.activeIntegrations::add);
+		BiomePreviewIntegration.Session integrationSession =
+				BiomePreviewIntegrations.open(this.integrationContext, error -> {}, this.activeIntegrations::add);
+		if (!BiolithCompat.isEnabled()) {
+			return integrationSession;
+		}
+		AutoCloseable biolithSession = BiolithPreviewContext.open(this.integrationContext.seed());
+		return () -> {
+			try {
+				integrationSession.close();
+			} finally {
+				try {
+					biolithSession.close();
+				} catch (Exception ignored) {
+				}
+			}
+		};
 	}
 
 	public String warning() {

@@ -2,18 +2,29 @@ package etcodehome.freeterraforged.compat.biolith;
 
 import java.util.List;
 
-/**
- * 1.20.1 backport stub: FTF's Biolith compat targets Biolith 3.x (MC 1.21) internals.
- * Original sources are parked in /backport-parked/biolith. Always disabled here.
- */
+import com.google.common.collect.ImmutableList;
+
+import etcodehome.freeterraforged.platform.ModLoaderUtil;
+
+// Targets Biolith Forge 1.0.1-beta.1, the first (and currently only) Forge build of Biolith for
+// Minecraft 1.20.1. Only covers the preset-preview GUI integration (see BiolithPreviewContext) --
+// real world generation needs no compat code at all, since Biolith and FTF both just hook into
+// vanilla's biome system independently.
 public class BiolithCompat {
-	public static final List<String> BIOLITH_COMPAT_MIXINS = List.of();
+	public static final List<String> BIOLITH_COMPAT_MIXINS = ImmutableList.of(
+		mixinClass("biolith.BiolithDimensionBiomePlacementAccessor"),
+		mixinClass("biolith.MixinBiolithOverworldBiomePlacement")
+	);
 
 	public static boolean isEnabled() {
-		return false;
+		return ModLoaderUtil.isLoaded("biolith");
 	}
 
 	public static boolean isBiolithMixin(String mixinClassName) {
-		return mixinClassName.startsWith("etcodehome.freeterraforged.mixin.biolith.");
+		return BIOLITH_COMPAT_MIXINS.contains(mixinClassName);
+	}
+
+	private static String mixinClass(String className) {
+		return "etcodehome.freeterraforged.mixin." + className;
 	}
 }

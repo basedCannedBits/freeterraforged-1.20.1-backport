@@ -14,11 +14,15 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Pseudo
 @Mixin(targets = "com.terraformersmc.biolith.impl.biome.OverworldBiomePlacement", remap = false)
 public abstract class MixinBiolithOverworldBiomePlacement {
+	// Fix (backport): confirmed via a real in-game injection failure that these fields resolve with
+	// OverworldBiomePlacement as the bytecode owner, not the declaring class DimensionBiomePlacement
+	// as originally guessed. Mixin's field @At target must match the exact owner in the GETFIELD
+	// instruction, which javac apparently emits as the accessing (sub)class here, not the declaring one.
 	@Redirect(
 		method = "getLocalNoise",
 		at = @At(
 			value = "FIELD",
-			target = "Lcom/terraformersmc/biolith/impl/biome/DimensionBiomePlacement;replacementNoise:Lcom/terraformersmc/biolith/impl/noise/OpenSimplexNoise2;"
+			target = "Lcom/terraformersmc/biolith/impl/biome/OverworldBiomePlacement;replacementNoise:Lcom/terraformersmc/biolith/impl/noise/OpenSimplexNoise2;"
 		),
 		remap = false
 	)
@@ -32,7 +36,7 @@ public abstract class MixinBiolithOverworldBiomePlacement {
 		method = "getLocalNoise",
 		at = @At(
 			value = "FIELD",
-			target = "Lcom/terraformersmc/biolith/impl/biome/DimensionBiomePlacement;seedlets:[I"
+			target = "Lcom/terraformersmc/biolith/impl/biome/OverworldBiomePlacement;seedlets:[I"
 		),
 		remap = false
 	)

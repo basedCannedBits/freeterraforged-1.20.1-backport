@@ -11,10 +11,14 @@ dependencies {
 	compileOnly "com.github.glitchfiend:TerraBlender-forge:${rootProject.minecraft_version}-${rootProject.terrablender_version}"
 	compileOnly "com.electronwill.night-config:toml:3.6.7"
 	//compileOnly "lithostitched-forge:1.0.0"
+	// Biolith 1.0.1-beta.1: the only Forge build Biolith has for 1.20.1. Confirmed (by inspecting the
+	// real jar) to be a native Forge build like TerraBlender-forge above, not a Fabric-remapped one, so
+	// plain compileOnly matches -- never bundled, purely so we can compile against its real classes.
+	compileOnly "maven.modrinth:biolith:1.0.1-beta.1-forge"
 }
 
 repositories {
-
+	maven { url "https://api.modrinth.com/maven" }
 }
 
 remapJar {

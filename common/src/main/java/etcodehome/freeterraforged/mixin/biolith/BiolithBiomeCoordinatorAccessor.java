@@ -17,9 +17,15 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Pseudo
 @Mixin(targets = "com.terraformersmc.biolith.impl.biome.BiomeCoordinator", remap = false)
 public interface BiolithBiomeCoordinatorAccessor {
-	// Not declared static: Mixin infers static-ness from the *target field*, not from this method's own
-	// modifiers -- a plain abstract interface method is the correct, standard shape (matches every other
-	// @Accessor in this project). The generated implementation ignores whatever receiver it's called on.
+	// Must be a *static* interface method here (unlike every other @Accessor in this project): a normal
+	// (non-static) interface method compiles its call site to invokeinterface, which the JVM null-checks
+	// unconditionally before dispatch -- regardless of whether the generated implementation ever uses the
+	// receiver. That's exactly what broke the previous version (NPE on a deliberately-null receiver).
+	// A static interface method compiles to invokestatic instead: no receiver, no null check possible.
+	// Java requires a body on any interface static method syntactically; Mixin's weaver discards this
+	// placeholder entirely and substitutes the real static field-set at class-load time.
 	@Accessor("registryManager")
-	void freeterraforged$setRegistryManagerStatic(RegistryAccess.Frozen value);
+	static void freeterraforged$setRegistryManagerStatic(RegistryAccess.Frozen value) {
+		throw new AssertionError("Mixin accessor was not applied");
+	}
 }

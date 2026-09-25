@@ -47,7 +47,7 @@ public final class BiolithPreviewContext {
 	// actual declared type, so we can set it directly.
 	public static void preInitializeBiomeLookup(RegistryAccess registries) {
 		if (registries instanceof RegistryAccess.Frozen frozen) {
-			((etcodehome.freeterraforged.mixin.biolith.BiolithBiomeCoordinatorAccessor) (Object) null)
+			etcodehome.freeterraforged.mixin.biolith.BiolithBiomeCoordinatorAccessor
 				.freeterraforged$setRegistryManagerStatic(frozen);
 		}
 	}

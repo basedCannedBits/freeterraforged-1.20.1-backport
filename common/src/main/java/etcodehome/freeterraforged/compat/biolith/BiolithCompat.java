@@ -6,10 +6,8 @@ import com.google.common.collect.ImmutableList;
 
 import etcodehome.freeterraforged.platform.ModLoaderUtil;
 
-// Targets Biolith Forge 1.0.1-beta.1, the first (and currently only) Forge build of Biolith for
-// Minecraft 1.20.1. Only covers the preset-preview GUI integration (see BiolithPreviewContext) --
-// real world generation needs no compat code at all, since Biolith and FTF both just hook into
-// vanilla's biome system independently.
+// only for biolith forge 1.0.1-beta.1 (the only forge build for 1.20.1). just the preview screen --
+// real world gen doesn't need any compat, biolith and ftf don't step on each other there
 public class BiolithCompat {
 	public static final List<String> BIOLITH_COMPAT_MIXINS = ImmutableList.of(
 		mixinClass("biolith.BiolithDimensionBiomePlacementAccessor"),

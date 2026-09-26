@@ -14,8 +14,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.ChunkPos;
 
-// Forge-specific transport for FTFFlowSyncPacket. Kept separate from the packet's own read/write
-// (in common/) so the packet class itself stays platform-agnostic.
+// forge side of sending FTFFlowSyncPacket, packet itself lives in common
 public final class FTFForgeNetwork {
 	private FTFForgeNetwork() {
 	}

@@ -84,7 +84,7 @@ public class WidgetList<T extends AbstractWidget> extends ContainerObjectSelecti
 		}
     }
 
-    // 1.20.1 backport: AbstractSelectionList has no getX/getY/getWidth/setX/setWidth/setHeight yet
+    // AbstractSelectionList doesn't have these yet on this version
     public int getX() {
         return this.x0;
     }

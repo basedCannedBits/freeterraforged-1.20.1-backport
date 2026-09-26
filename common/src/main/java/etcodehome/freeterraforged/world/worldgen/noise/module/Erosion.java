@@ -144,7 +144,7 @@ public record Erosion(Noise input, int seed, int octaves, float strength, float 
 		return dx * dx + dy * dy;
 	}
 
-	// Backport: StrictMath, not Math -- see NoiseUtil for why.
+	// strictmath, see NoiseUtil for why
 	private static float sqrt(float value) {
 		return (float) StrictMath.sqrt(value);
 	}

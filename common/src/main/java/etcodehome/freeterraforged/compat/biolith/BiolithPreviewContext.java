@@ -3,23 +3,16 @@ package etcodehome.freeterraforged.compat.biolith;
 import com.terraformersmc.biolith.impl.noise.OpenSimplexNoise2;
 import net.minecraft.core.RegistryAccess;
 
-// Real implementation for Biolith Forge 1.0.1-beta.1 (the first, and so far only, Forge-1.20.1-compatible
-// release). Deliberately much simpler than FTF's own upstream (Biolith 3.x) compat: that version
-// reimplements Biolith's replacement/sub-biome selection logic from scratch, using accessor mixins on
-// Biolith's raw request data. In 1.0.1-beta.1, DimensionBiomePlacement already exposes real selection
-// methods (selectReplacement/selectSubBiome/getDirectReplacement) that do this correctly on their own --
-// so instead of reimplementing the algorithm, this only redirects the *noise input* those methods read
-// from (replacementNoise/seedlets) to a value seeded from the preset preview's own seed, when a preview
-// is active. That means the preview automatically stays correct even if Biolith changes its own internal
-// selection logic later, since we never duplicate it.
+// biolith 1.0.1-beta.1 (only forge build for 1.20.1). just swaps the noise biolith uses for
+// replacement/sub-biome picks with a preview-seeded one when the preset preview is open, so the
+// preview shows what biolith would actually do without us having to reimplement its logic.
 public final class BiolithPreviewContext {
 	private static final ThreadLocal<State> ACTIVE = new ThreadLocal<>();
 
 	private BiolithPreviewContext() {
 	}
 
-	// Used to propagate the active preview session from the GUI thread onto whichever ForkJoinPool
-	// worker thread ends up computing a given preview tile.
+	// passes the active preview session from the gui thread to whatever worker thread renders a tile
 	public static Object captureState() {
 		return ACTIVE.get();
 	}
@@ -40,11 +33,8 @@ public final class BiolithPreviewContext {
 		};
 	}
 
-	// Biolith's own mixin into vanilla's MultiNoiseBiomeSource calls BiomeCoordinator.getBiomeLookupOrThrow(),
-	// which is normally only populated once during real server startup -- something FTF's preview never
-	// runs. Without this, that call throws NoSuchElementException the instant a preview samples a biome.
-	// registries is already a RegistryAccess.Frozen by the time a preview runs, matching the field's
-	// actual declared type, so we can set it directly.
+	// biolith's own mixin needs its registry lookup set up before it'll work, normally that only
+	// happens on real server start which the preview skips. set it manually here or preview crashes.
 	public static void preInitializeBiomeLookup(RegistryAccess registries) {
 		if (registries instanceof RegistryAccess.Frozen frozen) {
 			etcodehome.freeterraforged.mixin.biolith.BiolithBiomeCoordinatorAccessor
@@ -84,9 +74,7 @@ public final class BiolithPreviewContext {
 
 		private State(long seed) {
 			this.replacementNoise = new OpenSimplexNoise2(seed);
-			// Matches the derivation FTF's own (3.x-targeting) compat used: 8 single-byte seedlets
-			// sliced out of the world seed. This low-level seeding utility is very unlikely to have
-			// changed between Biolith versions, since doing so would silently break existing worlds.
+			// 8 seedlets sliced out of the world seed, one byte each
 			this.seedlets = new int[8];
 			for (int i = 0; i < this.seedlets.length; i++) {
 				this.seedlets[i] = (int) ((seed >> (i * 8)) & 255L);

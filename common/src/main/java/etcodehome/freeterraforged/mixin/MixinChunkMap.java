@@ -39,10 +39,8 @@ public class MixinChunkMap {
 	@Final
 	ServerLevel level;
 
-	// 1.20.1 backport: FTF sets this flag from a static handler at the very start of the constructor, which
-	// needs a newer Mixin than Forge 47.1.30 ships (0.8.5 only allows @Inject at RETURN/TAIL in constructors).
-	// A @Redirect around RandomState.create is allowed there and scopes the flag to exactly the call that reads it
-	// (this.level is assigned earlier in the constructor).
+	// mixin 0.8.5 (what forge 47.1.30 ships) won't allow @Inject in the middle of a constructor,
+	// so redirecting RandomState.create instead, works the same way
 	@Redirect(
 		method = "<init>",
 		at = @At(
@@ -69,9 +67,7 @@ public class MixinChunkMap {
 		}
 	}
 
-	// 1.20.1 backport: real FTF (1.21.1+) hooks PlayerChunkSender.sendChunk, a class that doesn't exist in
-	// 1.20.1. playerLoadedChunk is the equivalent point in this version's pipeline -- it fires once per
-	// player per chunk actually sent to them, with the same information available (player, chunk).
+	// real ftf hooks PlayerChunkSender, doesn't exist in 1.20.1. this fires at the same point though
 	@Inject(
 		at = @At("TAIL"),
 		method = "playerLoadedChunk"

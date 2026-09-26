@@ -206,11 +206,7 @@ public class NoiseUtil {
         return xd * g.x() + yd * g.y();
     }
     
-    // Backport: StrictMath instead of Math -- Math.* is explicitly NOT guaranteed bit-identical across
-    // JVM/Java versions (it may use faster, version-specific intrinsics); StrictMath is. This table (and
-    // every value derived from it) is built once at class-load and feeds every Perlin/Worley noise call in
-    // the game, so any drift here cascades into every downstream terrain/strata decision. Using StrictMath
-    // makes this deterministic regardless of which Java version the server happens to run.
+    // strictmath instead of math, math isn't guaranteed to give the same result across java versions
     public static float pow(float value, float power) {
         return (float)StrictMath.pow(value, power);
     }

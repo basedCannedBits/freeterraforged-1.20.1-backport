@@ -17,7 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
-import etcodehome.freeterraforged.FTFCommon;
 import etcodehome.freeterraforged.world.worldgen.feature.ore.DynamicOrePlan.VerticalFrame;
 import etcodehome.freeterraforged.world.worldgen.feature.ore.DynamicOrePlan.VerticalTransform;
 import etcodehome.freeterraforged.world.worldgen.feature.ore.OreContractClassifier.Status;
@@ -84,8 +83,6 @@ public final class DynamicOrePlanner {
 			if (result.status() != Status.SUPPORTED) {
 				increment(skipped, result.reasonCode());
 				result.failure().ifPresent(failure -> failures.add(featureId + " | " + failure));
-				// Diagnostic (backport): which features aren't getting height-remapped, and why.
-				FTFCommon.LOGGER.info("Dynamic ore contract skipped: {} | {}", featureId, result.reasonCode());
 				continue;
 			}
 			if ("<direct>".equals(featureId)) {
@@ -111,7 +108,6 @@ public final class DynamicOrePlanner {
 				delegated++;
 			} else {
 				increment(skipped, derivation.reasonCode());
-				FTFCommon.LOGGER.info("Dynamic ore contract skipped: {} | {}", featureId, derivation.reasonCode());
 			}
 		}
 

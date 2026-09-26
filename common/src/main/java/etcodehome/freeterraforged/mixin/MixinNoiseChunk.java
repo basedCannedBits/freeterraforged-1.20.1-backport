@@ -53,9 +53,7 @@ class MixinNoiseChunk {
     @Final
     private int cellHeight;
 
-	// 1.20.1 backport: FTF used an @Inject at INVOKE inside the constructor, which Mixin 0.8.5 (Forge 47.1.30)
-	// rejects. Redirecting RandomState.router() (the call right before router mapping) with captured constructor
-	// args runs at the same point; NTF used this exact pattern on 1.20.1.
+	// same mixin 0.8.5 constructor limitation as MixinChunkMap, redirect instead of inject
 	@Redirect(
 		method = "<init>",
 		at = @At(

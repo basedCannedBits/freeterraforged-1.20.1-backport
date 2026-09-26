@@ -8,16 +8,13 @@ import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-// getLocalNoise (confirmed present, signature (III)D) is what both selectReplacement and selectSubBiome
-// ultimately sample from. Redirecting just its two field reads means Biolith's own, real selection logic
-// runs unmodified -- it just samples from a preview-seeded noise field instead of the live world's.
+// swaps out the noise biolith's getLocalNoise reads from, so its own selection logic just works on
+// preview-seeded noise instead of the live world's without us touching that logic at all
 @Pseudo
 @Mixin(targets = "com.terraformersmc.biolith.impl.biome.OverworldBiomePlacement", remap = false)
 public abstract class MixinBiolithOverworldBiomePlacement {
-	// Fix (backport): confirmed via a real in-game injection failure that these fields resolve with
-	// OverworldBiomePlacement as the bytecode owner, not the declaring class DimensionBiomePlacement
-	// as originally guessed. Mixin's field @At target must match the exact owner in the GETFIELD
-	// instruction, which javac apparently emits as the accessing (sub)class here, not the declaring one.
+	// owner has to be OverworldBiomePlacement here, not DimensionBiomePlacement where the fields
+	// are actually declared. found that out the hard way from a failed injection in-game.
 	@Redirect(
 		method = "getLocalNoise",
 		at = @At(

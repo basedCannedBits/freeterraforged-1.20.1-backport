@@ -358,8 +358,7 @@ class PresetListPage extends BisectedPage<PresetConfigScreen, AbstractWidget, Ab
 		List<PresetEntry> userPresets = new ArrayList<>();
 		userPresets.addAll(this.listPresets(PRESET_PATH));
 		userPresets.addAll(this.listPresets(LEGACY_TF_PRESET_PATH));
-		// 1.20.1 backport: this build keeps the "freeterraforged" mod id, so the legacy FTF folder IS the preset folder.
-		// Listing it again would show every preset twice.
+		// we kept the freeterraforged mod id, so this would just list the same presets twice
 		if (!LEGACY_RTF_PRESET_PATH.equals(PRESET_PATH)) {
 			userPresets.addAll(this.listPresets(LEGACY_RTF_PRESET_PATH));
 		}

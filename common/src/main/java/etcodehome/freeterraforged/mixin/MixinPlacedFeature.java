@@ -11,8 +11,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementContext;
 import etcodehome.freeterraforged.world.worldgen.feature.placement.SurfaceFeatureRescue;
 
-// 1.20.1 backport: FTF used MixinExtras @WrapMethod (try/finally around the original).
-// Plain HEAD/RETURN injections give the same begin/finish pairing on normal returns.
+// real ftf uses @WrapMethod for this, plain HEAD/RETURN does the same job here
 @Mixin(PlacedFeature.class)
 class MixinPlacedFeature {
 

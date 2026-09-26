@@ -56,12 +56,11 @@ public class FTFForge {
 		}
 		modBus.addListener(FTFForge::gatherData);
 
-		// 1.20.1 backport: reload feature templates on /reload via Forge's event instead of a
-		// mixin into MinecraftServer's reloadResources lambda (lambda names differ on Forge).
+		// forge's reload event instead of mixing into MinecraftServer directly
 		MinecraftForge.EVENT_BUS.addListener(FTFForge::addReloadListeners);
 
-		// Backport testing aid: -Dfreeterraforged.exportDefaultPreset=<dir> writes the default preset as a
-		// datapack folder when a server starts, so FTF terrain can be tested on a headless server.
+		// -Dfreeterraforged.exportDefaultPreset=<dir> dumps the default preset as a datapack on
+		// server start, for testing on a headless server
 		if (System.getProperty(EXPORT_PRESET_PROPERTY) != null) {
 			MinecraftForge.EVENT_BUS.addListener(FTFForge::exportDefaultPreset);
 		}

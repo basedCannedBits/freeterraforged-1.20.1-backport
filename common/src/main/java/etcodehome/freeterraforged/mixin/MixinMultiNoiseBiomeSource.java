@@ -49,11 +49,6 @@ public abstract class MixinMultiNoiseBiomeSource implements FTFMultiNoiseBiomeSo
         return this.parameters.map(Function.identity(), holder -> holder.value().parameters());
     }
 
-    @Override
-    public java.util.Optional<net.minecraft.resources.ResourceKey<net.minecraft.world.level.biome.MultiNoiseBiomeSourceParameterList>> freeterraforged$getParameterListPresetKey() {
-        return this.parameters.right().flatMap(Holder::unwrapKey);
-    }
-
     @Inject(
             method = "getNoiseBiome(IIILnet/minecraft/world/level/biome/Climate$Sampler;)Lnet/minecraft/core/Holder;",
             at = @At("RETURN"),
@@ -138,18 +133,9 @@ public abstract class MixinMultiNoiseBiomeSource implements FTFMultiNoiseBiomeSo
             require = 0
     )
     private void rtf$bypassInlinePossibleBiomesCrash(CallbackInfoReturnable<java.util.stream.Stream<Holder<Biome>>> cir) {
-        // Only intercept inline parameter lists (Either.left) used by preset previews.
-        // Runtime worldgen sources (Either.right) are left untouched.
-        //
-        // IMPORTANT: this must preserve the parameter list's original order (matching vanilla
-        // MultiNoiseBiomeSource#collectPossibleBiomes, which streams the list directly with no
-        // Set involved). ChunkGenerator builds its one-time global FeatureSorter ordering from
-        // this exact stream, and every un-remapped vanilla feature's decoration RNG seed is an
-        // index into that ordering. Collectors.toUnmodifiableSet() (the previous implementation)
-        // returns a JDK immutable set whose iteration order is randomized per JVM run, silently
-        // reshuffling every ore's placement seed (granite/andesite/diorite/etc.) on every restart
-        // even with the same world seed. Deduplicating with Stream.distinct() instead preserves
-        // encounter order and is stable across runs.
+        // only touches inline (preview) parameter lists, real worldgen ones are untouched.
+        // has to keep original order here or ore placement gets reshuffled every restart -
+        // don't swap distinct() back to collecting into a Set, that randomizes order per jvm run
         if (this.parameters != null && this.parameters.left().isPresent()) {
             try {
                 Climate.ParameterList<Holder<Biome>> parameterList = this.freeterraforged$getParameters();

@@ -36,5 +36,3 @@ Needs Forge 47.1.30+ for 1.20.1.
 ```
 
 Jar shows up in `forge/build/libs/`.
-
-Biolith compat needs [Biolith Forge 1.0.1-beta.1](https://modrinth.com/mod/biolith/versions?g=1.20.1&l=forge) installed too

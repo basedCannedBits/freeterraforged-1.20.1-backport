@@ -37,7 +37,13 @@ import etcodehome.freeterraforged.world.worldgen.noise.module.Noise;
 import etcodehome.freeterraforged.world.worldgen.util.Seed;
 
 @Mixin(RandomState.class)
-@Implements(@Interface(iface = FTFRandomState.class, prefix = "freeterraforged$FTFRandomState$"))
+@Implements({
+	@Interface(iface = FTFRandomState.class, prefix = "freeterraforged$FTFRandomState$"),
+	// streams reflowing's RTF bridge reflects for this exact interface name and calls generatorContext() on it.
+	// needs its own prefix since FTFRandomState already has a generatorContext() with a different return type -
+	// can't have both as one real method, so mixin generates two separate accessor methods for us.
+	@Interface(iface = raccoonman.reterraforged.world.worldgen.RTFRandomState.class, prefix = "streamsreflowing$RTF$")
+})
 class MixinRandomState {
 
 	private DensityFunction.Visitor densityFunctionWrapper;
@@ -157,5 +163,23 @@ class MixinRandomState {
 	@Nullable
 	public DensityFunction freeterraforged$FTFRandomState$wrap(DensityFunction function) {
 		return this.densityFunctionWrapper != null ? function.mapAll(this.densityFunctionWrapper) : function;
+	}
+
+	// streams reflowing RTF-bridge compat - builds a shim GeneratorContext pointing at our real one,
+	// under a fake raccoonman.reterraforged package so SR's reflection-based RTF detection finds it.
+	// see raccoonman.reterraforged.world.worldgen.RTFRandomState for the why.
+	@Nullable
+	public raccoonman.reterraforged.world.worldgen.GeneratorContext streamsreflowing$RTF$generatorContext() {
+		if (this.generatorContext == null) {
+			return null;
+		}
+
+		raccoonman.reterraforged.world.worldgen.cell.heightmap.Levels shimLevels = new raccoonman.reterraforged.world.worldgen.cell.heightmap.Levels();
+		shimLevels.worldHeight = this.generatorContext.levels.worldHeight;
+
+		raccoonman.reterraforged.world.worldgen.GeneratorContext shim = new raccoonman.reterraforged.world.worldgen.GeneratorContext();
+		shim.levels = shimLevels;
+		shim.lookup = new raccoonman.reterraforged.world.worldgen.cell.heightmap.WorldLookup(this.generatorContext.lookup);
+		return shim;
 	}
 }

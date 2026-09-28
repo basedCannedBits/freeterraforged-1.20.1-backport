@@ -25,7 +25,7 @@ import net.minecraft.world.level.chunk.LevelChunkSection;
 import net.minecraft.world.level.chunk.PalettedContainer;
 
 @Mixin(ChunkAccess.class)
-public abstract class MixinChunkAccess implements FTFChunk, LevelHeightAccessor, IFlowFieldHolder {
+public abstract class MixinChunkAccess implements FTFChunk, LevelHeightAccessor, IFlowFieldHolder, raccoonman.reterraforged.world.worldgen.IFlowFieldHolder {
 
 	@Unique
 	private final ChunkFlowField freeterraforged$flowField = new ChunkFlowField();
@@ -33,6 +33,12 @@ public abstract class MixinChunkAccess implements FTFChunk, LevelHeightAccessor,
 	@Override
 	public ChunkFlowField freeterraforged$getFlowField() {
 		return this.freeterraforged$flowField;
+	}
+
+	// streams reflowing RTF-bridge compat - see raccoonman.reterraforged.world.worldgen.RTFRandomState
+	@Override
+	public raccoonman.reterraforged.world.worldgen.ChunkFlowField reterraforged$getFlowField() {
+		return new raccoonman.reterraforged.world.worldgen.ChunkFlowField(this.freeterraforged$flowField);
 	}
 
 	private OptionalInt maxHeight = OptionalInt.empty();
